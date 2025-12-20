@@ -1,32 +1,58 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BMICalculator from './BMICalculator';
 import BMITable from './BMITable';
 import BMIImage from './BMIImage';
 
 export default function BMISection() {
+  const [weight, setWeight] = useState(70); // Default values for better UX with sliders
+  const [height, setHeight] = useState(175);
   const [bmi, setBmi] = useState(null);
-  const [userWeight, setUserWeight] = useState(null);
-  const [userHeight, setUserHeight] = useState(null);
+  const [activeTab, setActiveTab] = useState('calculator'); // 'calculator' or 'visual'
 
-  const handleCalculate = (weight, height) => {
-    const heightInMeters = parseFloat(height) / 100;
-    const bmiValue = parseFloat(weight) / (heightInMeters * heightInMeters);
-    setBmi(bmiValue.toFixed(2));
-    setUserWeight(parseFloat(weight));
-    setUserHeight(parseFloat(height));
-  };
+  useEffect(() => {
+    if (weight && height) {
+      const heightInMeters = parseFloat(height) / 100;
+      const bmiValue = parseFloat(weight) / (heightInMeters * heightInMeters);
+      setBmi(bmiValue.toFixed(2));
+    } else {
+      setBmi(null);
+    }
+  }, [weight, height]);
 
   return (
     <section className="w-full max-w-7xl">
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Left Column: Calculator & Image */}
-        <div className="flex flex-col gap-8 w-full lg:w-1/3">
-           <BMICalculator onCalculate={handleCalculate} />
-           <BMIImage />
-           {/* Result Display */}
+        {/* Left Column: Tabs & Content */}
+        <div className="flex flex-col w-full lg:w-1/3">
+           {/* TABS */}
+           <div className="flex mb-4 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+             <button 
+                onClick={() => setActiveTab('calculator')}
+                className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest border-r-2 border-black transition-colors ${activeTab === 'calculator' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
+             >
+               Calculadora
+             </button>
+             <button 
+                onClick={() => setActiveTab('visual')}
+                className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest transition-colors ${activeTab === 'visual' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
+             >
+               Visual / Sliders
+             </button>
+           </div>
+           
+           {/* TAB CONTENT */}
+           <div className="mb-8">
+             {activeTab === 'calculator' ? (
+                <BMICalculator weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} />
+             ) : (
+                <BMIImage weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} />
+             )}
+           </div>
+
+           {/* Result Display (Shared) */}
            {bmi && (
-            <div className="text-center p-6 border-2 border-black bg-black text-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+            <div className="text-center p-6 border-2 border-black bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <p className="text-lg font-bold uppercase tracking-widest mb-1">Tu Resultado</p>
               <span className="font-black text-5xl">{bmi}</span>
             </div>
@@ -35,7 +61,7 @@ export default function BMISection() {
         
         {/* Right Column: Large Grid Table */}
         <div className="w-full lg:w-2/3">
-           <BMITable userWeight={userWeight} userHeight={userHeight} />
+           <BMITable userWeight={parseFloat(weight)} userHeight={parseFloat(height)} />
         </div>
       </div>
     </section>
