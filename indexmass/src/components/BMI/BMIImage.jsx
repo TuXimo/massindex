@@ -1,7 +1,7 @@
 
 export default function BMIImage({ weight, height, setWeight, setHeight }) {
   return (
-    <div className="p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 flex flex-col">
+    <div className="p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 flex flex-col h-full">
       <div className="flex-1 flex items-center justify-center min-h-[150px] mb-6 border-b-2 border-black border-dashed pb-6">
         <div className="text-center">
           <div className="w-24 h-24 mx-auto border-4 border-black border-dashed rounded-full flex items-center justify-center mb-4 bg-gray-50">
@@ -13,7 +13,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
       
       <div className="space-y-6">
          <div>
-          <label className="block text-xs font-bold uppercase mb-2 flex justify-between">
+          <label className="text-xs font-bold uppercase mb-2 justify-between">
             <span>Peso</span>
             <span>{weight || 0} kg</span>
           </label>
@@ -29,7 +29,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
         </div>
 
          <div>
-          <label className="block text-xs font-bold uppercase mb-2 flex justify-between">
+          <label className="text-xs font-bold uppercase mb-2 justify-between">
             <span>Altura</span>
             <span>{height || 0} cm</span>
           </label>

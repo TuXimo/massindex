@@ -4,7 +4,7 @@ export default function BMICalculator({ weight, height, setWeight, setHeight }) 
   // No submit handler needed as we update parent state directly
   
   return (
-    <div className="p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1">
+    <div className="p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 h-full">
       <h3 className="font-black text-xl mb-6 text-center border-b-2 border-black pb-2 uppercase">
         Calculadora
       </h3>

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import BMICalculator from './BMICalculator';
 import BMITable from './BMITable';
 import BMIImage from './BMIImage';
+import BMIResult from './BMIResult';
 
 export default function BMISection() {
   const [weight, setWeight] = useState(70); // Default values for better UX with sliders
@@ -22,7 +23,7 @@ export default function BMISection() {
 
   return (
     <section className="w-full max-w-7xl">
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch">
         {/* Left Column: Tabs & Content */}
         <div className="flex flex-col w-full lg:w-1/3">
            {/* TABS */}
@@ -42,7 +43,7 @@ export default function BMISection() {
            </div>
            
            {/* TAB CONTENT */}
-           <div className="mb-8">
+           <div className="mb-8 flex-1 flex flex-col">
              {activeTab === 'calculator' ? (
                 <BMICalculator weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} />
              ) : (
@@ -51,19 +52,16 @@ export default function BMISection() {
            </div>
 
            {/* Result Display (Shared) */}
-           {bmi && (
-            <div className="text-center p-6 border-2 border-black bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-lg font-bold uppercase tracking-widest mb-1">Tu Resultado</p>
-              <span className="font-black text-5xl">{bmi}</span>
-            </div>
-          )}
+           {/* Old result display removed, moved to bottom */}
         </div>
         
-        {/* Right Column: Large Grid Table */}
         <div className="w-full lg:w-2/3">
            <BMITable userWeight={parseFloat(weight)} userHeight={parseFloat(height)} />
         </div>
       </div>
+      
+      {/* Full Width Result Component */}
+      <BMIResult bmi={bmi} />
     </section>
   );
 }
