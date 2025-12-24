@@ -1,10 +1,15 @@
 
 
 export default function BMIImage({ weight, height, setWeight, setHeight }) {
-  // Base scales (reference: 175cm, 70kg)
+  // Base scales (reference: 175cm, 70kg, BMI ~22.8)
   // Tuned: 135 ensures that at 210cm the figure touches the top line roughly
   const heightScale = height / 135;
-  const widthScale = weight / 70;
+  
+  // Width now depends on BMI, not just weight.
+  // Reference BMI (22.85 for 175cm/70kg) -> scale 1
+  const heightInMeters = height / 100;
+  const bmi = weight / (heightInMeters * heightInMeters);
+  const widthScale = bmi / 22.85;
 
   // Common Slider Classes for consistency
   const sliderClasses = "bg-gray-200 rounded-full appearance-none cursor-pointer border-2 border-black accent-black";
@@ -18,7 +23,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
         {/* Left: Height Slider (Vertical) */}
         <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-20">
            <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap">Altura</label>
-           <div className="relative flex-1 flex items-center justify-center w-full min-h-[250px]">
+           <div className="relative flex-1 flex items-center justify-center w-full min-h-[320px]">
               <input
                 type="range"
                 min="140"
@@ -29,7 +34,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
                 className={`absolute ${sliderClasses}`}
                 style={{ 
                   transform: 'rotate(-90deg)', 
-                  width: '240px', // Slightly shorter to fit comfortably
+                  width: '300px', // Increased per user request
                   height: '16px', 
                 }}
               />

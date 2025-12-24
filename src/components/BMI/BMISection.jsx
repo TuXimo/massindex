@@ -22,10 +22,10 @@ export default function BMISection() {
   }, [weight, height]);
 
   return (
-    <section className="w-full max-w-7xl">
+    <section className="w-full max-w-[95rem]">
       <div className="flex flex-col lg:flex-row gap-8 items-stretch">
         {/* Left Column: Tabs & Content */}
-        <div className="flex flex-col w-full lg:w-1/3">
+        <div className="flex flex-col w-full lg:w-[450px] flex-none">
            {/* TABS */}
            <div className="flex mb-4 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
              <button 
@@ -43,7 +43,7 @@ export default function BMISection() {
            </div>
            
            {/* TAB CONTENT */}
-           <div className="mb-8 flex-1 flex flex-col">
+           <div className="mb-0 flex-1 flex flex-col">
              {activeTab === 'calculator' ? (
                 <BMICalculator weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} />
              ) : (
@@ -55,7 +55,7 @@ export default function BMISection() {
            {/* Old result display removed, moved to bottom */}
         </div>
         
-        <div className="w-full lg:w-2/3">
+        <div className="w-full lg:flex-1 min-w-0">
            <BMITable userWeight={parseFloat(weight)} userHeight={parseFloat(height)} />
         </div>
       </div>
