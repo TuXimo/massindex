@@ -51,11 +51,11 @@ export default function BMITable({ userWeight, userHeight }) {
           <table className="w-full text-xs text-center border-collapse border-2 border-black">
             <thead>
               <tr>
-                <th className="p-2 border-2 border-black bg-black text-white font-bold sticky left-0 z-10">
+                <th className="p-1 border-2 border-black bg-black text-white font-bold sticky left-0 z-10 h-9 w-9 min-w-[2.25rem] text-[0.6rem] leading-3">
                   ALT \ PESO
                 </th>
                 {weights.map((w) => (
-                  <th key={w} className="p-2 border-2 border-black bg-black text-white font-bold min-w-[50px]">
+                  <th key={w} className="p-1 border-2 border-black bg-black text-white font-bold min-w-[2.25rem] h-9 w-9 text-xs">
                     {w}
                   </th>
                 ))}
@@ -64,7 +64,7 @@ export default function BMITable({ userWeight, userHeight }) {
             <tbody>
               {heights.map((h) => (
                 <tr key={h}>
-                  <td className="p-2 border-2 border-black bg-black text-white font-bold sticky left-0 z-10">
+                  <td className="p-1 border-2 border-black bg-black text-white font-bold sticky left-0 z-10 h-9 w-9 min-w-[2.25rem] text-xs">
                     {h}
                   </td>
                   {weights.map((w) => {
@@ -74,9 +74,9 @@ export default function BMITable({ userWeight, userHeight }) {
                       <td 
                         key={`${h}-${w}`} 
                         id={active ? "active-bmi-cell" : undefined}
-                        className={`p-2 border border-black font-medium ${
+                        className={`p-1 border border-black font-medium h-9 w-9 text-[0.65rem] ${
                           active 
-                            ? 'bg-black text-white font-black text-base ring-2 ring-black relative z-20' 
+                            ? 'bg-black text-white font-black ring-2 ring-black relative z-20' 
                             : 'bg-white hover:bg-gray-100'
                         }`}
                       >
