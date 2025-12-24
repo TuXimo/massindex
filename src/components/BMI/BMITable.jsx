@@ -1,44 +1,80 @@
 import { useRef, useEffect, useState } from 'react';
 
-export default function BMITable({ userWeight, userHeight }) {
+export default function BMITable({ userWeight, userHeight, unit = 'metric' }) {
   const containerRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1);
 
+  // Conversion Helpers
+  const kgToLbs = (kg) => kg * 2.20462;
+  const cmToInches = (cm) => cm / 2.54;
+  
+  // Format helpers
+  const formatHeight = (val) => {
+      if (unit === 'metric') return val;
+      // Convert inches to Ft'In"
+      const feet = Math.floor(val / 12);
+      const inches = Math.round(val % 12);
+      return `${feet}'${inches}"`;
+  };
+
+  const currentWeight = userWeight;
+  const currentHeight = userHeight;
+
   const weights = (() => {
     const w = [];
-    for (let i = 40; i <= 160; i += 5) w.push(i);
-    if (userWeight && !w.includes(userWeight) && userWeight >= 40 && userWeight <= 160) {
-      w.push(userWeight);
+    if (unit === 'metric') {
+        for (let i = 40; i <= 160; i += 5) w.push(i);
+        if (currentWeight && !w.includes(currentWeight) && currentWeight >= 40 && currentWeight <= 160) {
+          w.push(currentWeight);
+        }
+    } else {
+        // Imperial: roughly 90lbs (40kg) to 350lbs (160kg)
+        for (let i = 90; i <= 350; i += 10) w.push(i);
+        if (currentWeight && !w.includes(currentWeight) && currentWeight >= 90 && currentWeight <= 350) {
+           w.push(currentWeight);
+        }
     }
     return w.sort((a, b) => a - b);
   })();
 
   const heights = (() => {
     const h = [];
-    for (let i = 140; i <= 220; i += 5) h.push(i);
-    if (userHeight && !h.includes(userHeight) && userHeight >= 140 && userHeight <= 220) {
-      h.push(userHeight);
+    if (unit === 'metric') {
+        for (let i = 140; i <= 220; i += 5) h.push(i);
+        if (currentHeight && !h.includes(currentHeight) && currentHeight >= 140 && currentHeight <= 220) {
+          h.push(currentHeight);
+        }
+    } else {
+        // Imperial: 55 inches (4'7") to 87 inches (7'3")
+        for (let i = 55; i <= 87; i += 2) h.push(i);
+        if (currentHeight && !h.includes(currentHeight) && currentHeight >= 55 && currentHeight <= 87) {
+           h.push(currentHeight);
+        }
     }
     return h.sort((a, b) => a - b);
   })();
 
   const calculateCellBMI = (weight, height) => {
-    const hM = height / 100;
-    return (weight / (hM * hM)).toFixed(1);
+    if (unit === 'metric') {
+        const hM = height / 100;
+        return (weight / (hM * hM)).toFixed(1);
+    } else {
+        // Imperial: 703 * weight (lbs) / height (in)^2
+        return ((703 * weight) / (height * height)).toFixed(1);
+    }
   };
 
   const isHighlighted = (w, h) => {
-    if (!userWeight || !userHeight) return false;
-    return w === userWeight && h === userHeight;
+    if (!currentWeight || !currentHeight) return false;
+    return w === currentWeight && h === currentHeight;
   };
 
   // Auto-scroll effect
   useEffect(() => {
-    if (userWeight && userHeight) {
+    if (currentWeight && currentHeight) {
       const activeCell = document.getElementById('active-bmi-cell');
       if (activeCell && containerRef.current) {
 
-         
          const container = containerRef.current;
          const cellTop = activeCell.offsetTop;
          const cellLeft = activeCell.offsetLeft;
@@ -62,13 +98,13 @@ export default function BMITable({ userWeight, userHeight }) {
          }
       }
     }
-  }, [userWeight, userHeight, zoomLevel]);
+  }, [currentWeight, currentHeight, zoomLevel]); // Depend on converted values
 
   return (
     <div className="w-full max-w-full overflow-hidden p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative group">
       <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-6">
         <h3 className="font-black text-xl uppercase">
-          Tabla de Referencia
+          Tabla de Referencia {unit === 'imperial' && '(Imperial)'}
         </h3>
         <div className="flex gap-2">
 
@@ -97,7 +133,7 @@ export default function BMITable({ userWeight, userHeight }) {
                   style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
                   className="p-1 border-2 border-black bg-black text-white font-bold sticky left-0 top-0 z-50 leading-3"
                 >
-                  ALT \ PESO
+                  {unit === 'metric' ? 'ALT \\ PESO' : 'HGT \\ WGT'}
                 </th>
                 {weights.map((w) => (
                   <th 
@@ -117,7 +153,7 @@ export default function BMITable({ userWeight, userHeight }) {
                     style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
                     className="p-1 border-2 border-black bg-black text-white font-bold sticky left-0 z-30"
                   >
-                    {h}
+                    {formatHeight(h)}
                   </td>
                   {weights.map((w) => {
                     const bmi = calculateCellBMI(w, h);
