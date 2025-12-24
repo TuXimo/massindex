@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { getSliderRanges } from '../../utils/bmiUtils';
 
 // Helper Component for Imperial Input to handle format state
 const ImperialHeightInput = ({ inches, onChange, min, max }) => {
@@ -57,7 +58,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max }) => {
   );
 };
 
-export default function BMIImage({ weight, height, setWeight, setHeight, unit = 'metric' }) {
+export default function BMIImage({ weight, height, setWeight, setHeight, unit = 'metric', userConfig = {} }) {
   
   // Normalized values for visualization
   const metricWeight = unit === 'metric' ? parseFloat(weight) : parseFloat(weight) / 2.20462;
@@ -69,7 +70,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   
   let widthScale = 1;
   if (metricWeight && metricHeight) {
-     widthScale = 0.5 + (0.5 * (currentRatio / baseRatio)); 
+     widthScale = 0.5 + (0.65 * (currentRatio / baseRatio)); 
   }
   const heightScale = metricHeight ? (metricHeight / 175) : 1;
   // Calculate BMI for dynamic coloring
@@ -148,9 +149,10 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
     return parseFloat(str);
   };
 
-  const ranges = unit === 'metric' 
-    ? { hMin: 140, hMax: 220, hStep: 5, wMin: 40, wMax: 160, wStep: 5 }
-    : { hMin: 55, hMax: 87, hStep: 2, wMin: 90, wMax: 350, wStep: 1 };
+  // Calculate dynamic ranges based on mode (adult/child) and age
+  const ranges = useMemo(() => {
+     return getSliderRanges(unit, userConfig.mode, userConfig.age);
+  }, [unit, userConfig.mode, userConfig.age]);
 
   return (
     <div className="flex-col flex p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">

@@ -1,5 +1,5 @@
 
-export const getBmiInfo = (weight, height, unit) => {
+export const getBmiInfo = (weight, height, unit, userConfig = null) => {
     // Normalize to metric for calculation
     // weight: kg or lbs
     // height: cm or inches
@@ -26,6 +26,10 @@ export const getBmiInfo = (weight, height, unit) => {
     const hM = metricHeight / 100;
     const bmi = metricWeight / (hM * hM);
 
+    // TODO: Add Logic for Children Percentiles here if userConfig.mode === 'child'
+    // For now, we reuse adult categories as placeholder but with a note
+    // Real implementation would require lookup tables (WHO/CDC)
+    
     // Categories & Colors
     // Low: <18.5 (Blue)
     if (bmi < 18.5) return { 
@@ -104,4 +108,72 @@ export const getBmiInfo = (weight, height, unit) => {
         sliderAccent: 'accent-red-600',
         category: 'Obesidad III'
     };
+};
+
+export const getSliderRanges = (unit, mode, age) => {
+    // Default Adult Ranges
+    const defaultMetric = { hMin: 140, hMax: 220, hStep: 1, wMin: 40, wMax: 160, wStep: 0.5 };
+    const defaultImperial = { hMin: 55, hMax: 87, hStep: 1, wMin: 90, wMax: 350, wStep: 1 }; // h in inches, w in lbs
+
+    if (mode !== 'child') {
+        return unit === 'metric' ? defaultMetric : defaultImperial;
+    }
+
+    // Child Ranges logic
+    // Age: 2 - 20
+    const cleanAge = parseInt(age);
+    
+    // Fallback if NaN or out of bounds (though typical input logic prevents this)
+    if (isNaN(cleanAge) || cleanAge < 2) return unit === 'metric' ? defaultMetric : defaultImperial;
+
+    // Heuristic Formulas for Ranges
+    // Height (cm) approx: 
+    // 2yo: 80-95cm
+    // 10yo: 130-150cm
+    // Min Range ~ -20% of avg, Max ~ +20%
+    
+    // Very rough growth curve tracking for SLIDER BOUNDARIES (not medical limits)
+    // hMin = 70 + (age * 4) -> 2y=78, 10y=110, 18y=142
+    // hMax = 100 + (age * 6) -> 2y=112, 10y=160, 18y=208
+    
+    // Weight (kg) approx:
+    // 2yo: 10-15kg
+    // 10yo: 30-45kg
+    // wMin = 8 + (age * 1.5) -> 2y=11, 10y=23, 18y=35
+    // wMax = 20 + (age * 5) -> 2y=30, 10y=70, 18y=110 (allows overweight range)
+
+    let hMin, hMax, wMin, wMax;
+
+    if (unit === 'metric') {
+        hMin = 70 + (cleanAge * 3.5);
+        hMax = 100 + (cleanAge * 6.5);
+        wMin = 8 + (cleanAge * 1.5);
+        wMax = 20 + (cleanAge * 6); // Allow headroom for obesity checking
+        
+        // Floor/Ceil and Stephens
+        return {
+            hMin: Math.floor(hMin),
+            hMax: Math.ceil(hMax),
+            hStep: 1,
+            wMin: Math.floor(wMin),
+            wMax: Math.ceil(wMax),
+            wStep: 0.5
+        };
+    } else {
+        // Imperial
+        // Convert metric heuristic to imperial
+        hMin = (70 + (cleanAge * 3.5)) / 2.54;
+        hMax = (100 + (cleanAge * 6.5)) / 2.54;
+        wMin = (8 + (cleanAge * 1.5)) * 2.2;
+        wMax = (20 + (cleanAge * 6)) * 2.2;
+
+        return {
+            hMin: Math.floor(hMin),
+            hMax: Math.ceil(hMax),
+            hStep: 1, // inches
+            wMin: Math.floor(wMin),
+            wMax: Math.ceil(wMax),
+            wStep: 1 // lbs
+        };
+    }
 };

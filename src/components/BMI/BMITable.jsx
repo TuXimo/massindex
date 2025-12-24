@@ -1,6 +1,7 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
+import { getSliderRanges } from '../../utils/bmiUtils';
 
-export default function BMITable({ userWeight, userHeight, unit = 'metric', onSelect }) {
+export default function BMITable({ userWeight, userHeight, unit = 'metric', onSelect, userConfig = {} }) {
   const containerRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
@@ -11,6 +12,11 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const [showHighlight, setShowHighlight] = useState(false);
   const lastProps = useRef({ w: userWeight, h: userHeight, u: unit });
   const highlightTimerRef = useRef(null);
+
+  // Recalculate ranges for table consistently with sliders
+  const ranges = useMemo(() => {
+     return getSliderRanges(unit, userConfig?.mode, userConfig?.age);
+  }, [unit, userConfig?.mode, userConfig?.age]);
 
   const triggerHighlight = () => {
     setShowHighlight(true);
@@ -86,36 +92,32 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const currentWeight = userWeight ? parseFloat(userWeight) : null;
   const currentHeight = userHeight ? parseFloat(userHeight) : null;
 
+
   const weights = (() => {
     const w = [];
-    if (unit === 'metric') {
-        for (let i = 40; i <= 160; i += 5) w.push(i);
-        if (currentWeight && !w.includes(currentWeight) && currentWeight >= 40 && currentWeight <= 160) {
-          w.push(currentWeight);
-        }
-    } else {
-        // Imperial: roughly 90lbs (40kg) to 350lbs (160kg)
-        for (let i = 90; i <= 350; i += 10) w.push(i);
-        if (currentWeight && !w.includes(currentWeight) && currentWeight >= 90 && currentWeight <= 350) {
-           w.push(currentWeight);
-        }
+    // Use dynamic ranges with fallback to hardcoded if not present (safety)
+    const min = ranges?.wMin || (unit === 'metric' ? 40 : 90);
+    const max = ranges?.wMax || (unit === 'metric' ? 160 : 350);
+    const step = unit === 'metric' ? 5 : 10;
+
+    for (let i = min; i <= max; i += step) w.push(i);
+    
+    if (currentWeight && !w.includes(currentWeight) && currentWeight >= min && currentWeight <= max) {
+      w.push(currentWeight);
     }
     return w.sort((a, b) => a - b);
   })();
 
   const heights = (() => {
     const h = [];
-    if (unit === 'metric') {
-        for (let i = 140; i <= 220; i += 5) h.push(i);
-        if (currentHeight && !h.includes(currentHeight) && currentHeight >= 140 && currentHeight <= 220) {
-          h.push(currentHeight);
-        }
-    } else {
-        // Imperial: 55 inches (4'7") to 87 inches (7'3")
-        for (let i = 55; i <= 87; i += 2) h.push(i);
-        if (currentHeight && !h.includes(currentHeight) && currentHeight >= 55 && currentHeight <= 87) {
-           h.push(currentHeight);
-        }
+    const min = ranges?.hMin || (unit === 'metric' ? 140 : 55);
+    const max = ranges?.hMax || (unit === 'metric' ? 220 : 87);
+    const step = unit === 'metric' ? 5 : 2;
+
+    for (let i = min; i <= max; i += step) h.push(i);
+
+    if (currentHeight && !h.includes(currentHeight) && currentHeight >= min && currentHeight <= max) {
+      h.push(currentHeight);
     }
     return h.sort((a, b) => a - b);
   })();
@@ -169,9 +171,22 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   return (
       <div className="w-full max-w-full overflow-hidden p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl relative group transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
       <div className="flex justify-between items-center border-b border-slate-700 pb-2 mb-6">
-        <h3 className="font-bold text-xl uppercase text-white tracking-wider">
-          Tabla de Referencia {unit === 'imperial' && '(Imperial)'}
-        </h3>
+        <div className="flex items-center gap-4">
+            <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2">
+              {userConfig?.mode === 'child' ? 'Tabla Pediátrica' : 'Tabla de Referencia'} 
+              {unit === 'imperial' && <span className="text-slate-500 text-sm">(Imperial)</span>}
+            </h3>
+            {userConfig?.mode === 'child' && (
+                <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90">
+                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20">
+                        {userConfig.age} años
+                    </span>
+                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20">
+                        {userConfig.gender === 'male' ? 'M' : 'F'}
+                    </span>
+                </div>
+            )}
+        </div>
         <div className="flex gap-2">
             <button 
               onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}

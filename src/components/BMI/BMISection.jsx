@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
+import { useConfig } from '../../context/ConfigContext';
 import BMICalculator from './BMICalculator';
 import BMITable from './BMITable';
 import BMIImage from './BMIImage';
@@ -14,10 +15,11 @@ export default function BMISection() {
   const [activeTab, setActiveTab] = useState('visual'); // 'calculator' or 'visual' - default to visual
   const [unit, setUnit] = useState('metric'); // 'metric' or 'imperial'
 
-  const [language, setLanguage] = useState('es'); // 'en' or 'es'
-
+  const { language, setLanguage, userConfig } = useConfig();
+  
   // Calculate BMI Info dynamically for styling controls
-  const bmiInfo = getBmiInfo(weight, height, unit);
+  // We pass userConfig to allow future calculation updates for children
+  const bmiInfo = getBmiInfo(weight, height, unit, userConfig);
 
   const handleUnitChange = (newUnit) => {
     if (newUnit === unit) return;
@@ -80,14 +82,21 @@ export default function BMISection() {
              />
            </div>
 
-           {/* BOX 2: Visualization / Info (Red Box equivalent with inputs) */}
-           <div className="flex-none min-h-[400px]">
-             {activeTab === 'calculator' ? (
-                <BMICalculator weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} unit={unit} />
-             ) : (
-                <BMIImage weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} unit={unit} />
-             )}
-           </div>
+           {/* BOX 2: Visualization / Info */}
+   <div className="flex-none min-h-[400px]">
+     {activeTab === 'calculator' ? (
+        <BMICalculator weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} unit={unit} />
+     ) : (
+        <BMIImage 
+            weight={weight} 
+            height={height} 
+            setWeight={setWeight} 
+            setHeight={setHeight} 
+            unit={unit} 
+            userConfig={userConfig} // Pass config
+        />
+     )}
+   </div>
         </div>
         
         {/* Right Column (Result & Table) */}
@@ -105,6 +114,7 @@ export default function BMISection() {
                  userHeight={height} 
                  unit={unit}
                  onSelect={handleTableSelect}
+                 userConfig={userConfig}
               />
            </div>
         </div>
