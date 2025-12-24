@@ -27,7 +27,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
               <input
                 type="range"
                 min="140"
-                max="210"
+                max="220"
                 step="1"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
@@ -113,7 +113,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
          <input
             type="range"
             min="40"
-            max="150"
+            max="160"
             step="1"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
@@ -121,7 +121,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
           />
           <div className="flex justify-between text-xs font-bold text-gray-400 mt-2">
             <span>40kg</span>
-            <span>150kg</span>
+            <span>160kg</span>
           </div>
       </div>
 

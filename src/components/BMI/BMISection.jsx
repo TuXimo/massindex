@@ -55,7 +55,7 @@ export default function BMISection() {
            {/* Old result display removed, moved to bottom */}
         </div>
         
-        <div className="w-full lg:flex-1 min-w-0">
+        <div className="w-full lg:flex-1 min-w-0 overflow-hidden">
            <BMITable userWeight={parseFloat(weight)} userHeight={parseFloat(height)} />
         </div>
       </div>

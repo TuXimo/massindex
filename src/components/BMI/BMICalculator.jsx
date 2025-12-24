@@ -19,7 +19,7 @@ export default function BMICalculator({ weight, height, setWeight, setHeight }) 
             placeholder="70"
             required
             min="40"
-            max="120"
+            max="160"
           />
         </div>
         <div>
@@ -31,8 +31,8 @@ export default function BMICalculator({ weight, height, setWeight, setHeight }) 
             className="w-full p-3 border-2 border-black rounded-none focus:outline-none focus:bg-black focus:text-white transition-colors placeholder-gray-400 font-bold"
             placeholder="175"
             required
-            min="150"
-            max="200"
+            min="140"
+            max="220"
           />
         </div>
       </div>
