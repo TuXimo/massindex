@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import SettingsModal from './SettingsModal';
 import { useConfig } from '../context/ConfigContext';
@@ -6,20 +6,34 @@ import { useConfig } from '../context/ConfigContext';
 export default function Header() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGearHovered, setIsGearHovered] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const { language, setLanguage, themeColor } = useConfig();
+  const langMenuRef = useRef(null);
 
   const { t } = useTranslation();
   const languages = ['es', 'en', 'fr', 'it', 'de', 'ja', 'hi', 'zh', 'ar'];
 
+  // Close lang menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <header className="w-full py-8 bg-transparent relative z-20">
-      {/* Botones Absolutos a la derecha de toda la pantalla */}
-      <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-3 z-30">
+    <header className="w-full py-6 lg:py-8 bg-transparent relative z-20 flex flex-col lg:block items-center gap-4 lg:gap-0">
+      {/* Buttons: Static on mobile (order-2), Absolute on desktop */}
+      <div className="order-2 lg:order-none relative lg:absolute lg:right-6 lg:top-1/2 lg:-translate-y-1/2 flex items-center gap-3 z-30">
              
              {/* Language Dropdown */}
-             <div className="relative group">
+             <div className="relative" ref={langMenuRef}>
                  <button 
-                    className="flex items-center gap-2 bg-slate-900/50 hover:bg-slate-800/80 text-slate-300 font-bold px-3 py-2 rounded-lg border border-slate-700/50 transition-colors backdrop-blur-sm"
+                    onClick={() => setIsLangOpen(!isLangOpen)}
+                    className={`flex items-center gap-2 bg-slate-900/50 hover:bg-slate-800/80 font-bold px-3 py-2 rounded-lg border transition-colors backdrop-blur-sm ${isLangOpen ? 'border-blue-500/50 text-white' : 'border-slate-700/50 text-slate-300'}`}
                  >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -31,21 +45,23 @@ export default function Header() {
                         viewBox="0 0 24 24" 
                         strokeWidth={2} 
                         stroke="currentColor" 
-                        className="w-3 h-3 text-slate-500 transition-colors group-hover:text-white"
-                        style={{ color: undefined }} /* Let hover/group-hover handle slate/white default, but maybe override with theme? User said "lista de idiomas". Let's stick to the list items and the gear mostly, but maybe the chevron too? Let's keep chevron neutral for now to not overdo it. */
+                        className={`w-3 h-3 text-slate-500 transition-transform duration-200 ${isLangOpen ? 'rotate-180 text-white' : ''}`}
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
                  </button>
 
                  {/* Dropdown Menu */}
-                 <div className="absolute right-0 top-full mt-2 w-max min-w-[100px] bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-xl shadow-slate-950/50 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 z-50">
+                 <div 
+                    className={`absolute right-0 top-full mt-2 w-max min-w-[100px] bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-xl shadow-slate-950/50 overflow-hidden transition-all duration-200 transform origin-top-right z-50 ${isLangOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}
+                 >
                     <div className="py-1">
                         {languages.map((lang) => (
                             <button
                                 key={lang}
                                 onClick={() => {
                                     setLanguage(lang);
+                                    setIsLangOpen(false);
                                 }}
                                 className={`w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-wider flex items-center justify-between hover:bg-white/5 transition-colors ${language === lang ? 'bg-blue-500/10' : 'text-slate-400 hover:text-white'}`}
                                 style={language === lang ? { color: themeColor } : {}}
@@ -84,7 +100,7 @@ export default function Header() {
              </button>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 flex justify-center items-center relative">
+      <div className="order-1 lg:order-none max-w-6xl mx-auto px-6 flex justify-center items-center relative w-full lg:w-auto">
         <div 
             className="group cursor-pointer"
             onClick={() => {
@@ -94,7 +110,7 @@ export default function Header() {
                 }
             }}
         >
-            <h1 className="text-4xl font-bold tracking-widest uppercase text-slate-200 drop-shadow-sm transition-opacity group-hover:opacity-80">
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-widest uppercase text-slate-200 drop-shadow-sm transition-opacity group-hover:opacity-80">
             {t('header.title')}
             </h1>
         </div>

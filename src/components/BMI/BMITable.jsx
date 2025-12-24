@@ -5,7 +5,15 @@ import { getSliderRanges } from '../../utils/bmiUtils';
 export default function BMITable({ userWeight, userHeight, unit = 'metric', onSelect, userConfig = {} }) {
   const { t } = useTranslation();
   const containerRef = useRef(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
+  
+  // Default Zoom: Higher on mobile (1.2), normal on desktop (1.0)
+  const [zoomLevel, setZoomLevel] = useState(() => {
+    if (typeof window !== 'undefined') {
+        return window.innerWidth < 1024 ? 1.2 : 1;
+    }
+    return 1;
+  });
+
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
@@ -142,6 +150,9 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   // Auto-scroll effect
   useEffect(() => {
     if (currentWeight && currentHeight) {
+      // Disable auto-scroll on mobile to avoid "snapping" effect
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
+
       const activeCell = document.getElementById('active-bmi-cell');
       if (activeCell && containerRef.current) {
 
@@ -172,25 +183,25 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
   return (
       <div className="w-full max-w-full overflow-hidden p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl relative group transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
-      <div className="flex justify-between items-center border-b border-slate-700 pb-2 mb-6">
-        <div className="flex items-center gap-4">
-            <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-slate-700 pb-2 mb-6 gap-4 lg:gap-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full lg:w-auto">
+            <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2 shrink-0">
               {userConfig?.mode === 'child' ? t('table.pediatric') : t('table.reference')} 
               {unit === 'imperial' && <span className="text-slate-500 text-sm">{t('table.imperial')}</span>}
             </h3>
             {userConfig?.mode === 'child' && (
-                <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90">
-                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20">
+                <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90 mt-1 sm:mt-0">
+                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20 whitespace-nowrap">
                         {userConfig.age} {t('table.years')}
                     </span>
-                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20">
+                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20 whitespace-nowrap">
                         {userConfig.gender === 'male' ? 'M' : 'F'}
                     </span>
                 </div>
             )}
         </div>
-        <div className="flex gap-2">
-            <button 
+        <div className="flex gap-2 self-end lg:self-auto">
+             <button 
               onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
               title="Reducir"
@@ -298,7 +309,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                             triggerHighlight();
                             if (onSelect) onSelect(w, h);
                           }}
-                          style={{ width: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
+                          style={{ width: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem`, touchAction: 'manipulation' }}
                           className={`p-1 cursor-pointer select-none border-none outline-none ${cellStateClasses}`}
                         >
                           {bmi}

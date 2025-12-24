@@ -121,7 +121,8 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   // Custom Slider formatting
   // We want a thick track. Standard input[type=range] is hard to style thick without custom CSS.
   // We'll use a class that gives it a standard sleek look, and reliance on accent color.
-  const sliderClasses = `w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer ${visualStyle.sliderAccent} transition-colors duration-300`;
+  // REMOVED w-full from here to avoid conflict with vertical slider fixed width
+  const sliderClasses = `h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer ${visualStyle.sliderAccent} transition-colors duration-300`;
 
   const handleManualInput = (setter, max) => (e) => {
     let value = e.target.value;
@@ -158,13 +159,13 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   }, [unit, userConfig.mode, userConfig.age]);
 
   return (
-    <div className="flex-col flex p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
+    <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
       
       {/* Top Section: Height Slider + Visualization */}
-      <div className="flex-1 flex flex-row gap-6 relative min-h-0">
+      <div className="flex-1 flex flex-row gap-4 lg:gap-6 relative min-h-0">
         
         {/* Left: Height Slider (Vertical) */}
-        <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-20">
+        <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-14 lg:w-20">
            <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
              {t('common.height')}
            </label>
@@ -176,11 +177,10 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 step={ranges.hStep}
                 value={height === '' ? (unit === 'metric' ? 175 : 69) : height}
                 onChange={(e) => setHeight(e.target.value)}
-                className={`absolute ${sliderClasses}`}
                 style={{ 
                   transform: 'rotate(-90deg)', 
-                  width: '280px', 
                 }}
+                className={`absolute ${sliderClasses} w-[260px] lg:w-[280px]`}
               />
            </div>
            <div className="flex flex-col items-center mt-2 w-full">
@@ -223,12 +223,12 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
             </div>
 
             {/* Dynamic SVG with Glow Effect */}
-            <svg 
-              viewBox="-100 -60 400 520" 
-              preserveAspectRatio="xMidYMax meet"
-              className="h-full w-full transition-all duration-300 ease-out drop-shadow-2xl z-10"
-              style={{ filter: `drop-shadow(0 0 15px ${visualStyle.color}40)` }} 
-            >
+             <svg 
+               viewBox="-150 -100 500 650" 
+               preserveAspectRatio="xMidYMax meet"
+               className="h-full w-full transition-all duration-300 ease-out drop-shadow-2xl z-10"
+               style={{ filter: `drop-shadow(0 0 15px ${visualStyle.color}40)` }} 
+             >
               <g transform="translate(100, 430)">
                   {/* Shadow */}
                   <ellipse cx="0" cy="20" rx="80" ry="15" fill="#000" opacity="0.2" filter="blur(5px)" />
@@ -257,7 +257,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
       </div>
 
       {/* Bottom Section: Weight Slider */}
-      <div className="pt-6 px-4">
+      <div className="pt-4 lg:pt-6 px-2 lg:px-4">
          <div className="flex justify-between items-center mb-2">
            <label className="text-xs font-bold uppercase text-slate-200">{t('common.weight')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
            <div className="flex items-center gap-1">
@@ -281,7 +281,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
             step={ranges.wStep}
             value={weight === '' ? (unit === 'metric' ? 70 : 154) : weight}
             onChange={(e) => setWeight(e.target.value)}
-            className={`${sliderClasses}`}
+            className={`w-full ${sliderClasses}`}
           />
           <div className="flex justify-between text-xs font-bold text-slate-600 mt-2">
             <span>{ranges.wMin}{unit === 'metric' ? 'kg' : 'lb'}</span>

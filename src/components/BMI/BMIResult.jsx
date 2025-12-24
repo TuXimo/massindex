@@ -53,7 +53,7 @@ export default function BMIResult({ bmi }) {
   }
 
   return (
-    <div className={`p-6 bg-slate-800/50 backdrop-blur-sm border-l-8 ${accentColor} rounded-r-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all min-h-[174px] flex flex-col justify-center`}>
+    <div className={`p-6 bg-slate-800/50 backdrop-blur-sm border-l-8 ${accentColor} rounded-r-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all min-h-[174px] flex-col justify-center ${!bmi ? 'hidden lg:flex' : 'flex'}`}>
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">

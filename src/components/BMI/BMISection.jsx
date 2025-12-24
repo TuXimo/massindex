@@ -12,7 +12,13 @@ export default function BMISection() {
   const [weight, setWeight] = useState(''); 
   const [height, setHeight] = useState('');
   const [bmi, setBmi] = useState(null);
-  const [activeTab, setActiveTab] = useState('visual'); // 'calculator' or 'visual' - default to visual
+  const [activeTab, setActiveTab] = useState(() => {
+    // Default to 'calculator' on mobile (< 1024px), 'visual' on desktop
+    if (typeof window !== 'undefined') {
+        return window.innerWidth < 1024 ? 'calculator' : 'visual';
+    }
+    return 'visual';
+  });
   const [unit, setUnit] = useState('metric'); // 'metric' or 'imperial'
 
   const { language, setLanguage, userConfig, setThemeColor } = useConfig();
@@ -91,10 +97,10 @@ export default function BMISection() {
   };
 
   return (
-    <section id="bmi-main-view" ref={sectionRef} className="w-full max-w-[95rem] min-h-[800px] flex flex-col">
-      <div className="flex flex-col lg:flex-row gap-8 items-stretch flex-1 min-h-0">
+    <section id="bmi-main-view" ref={sectionRef} className="w-full max-w-[95rem] min-h-auto lg:min-h-[800px] flex flex-col">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-stretch flex-1 min-h-0">
         {/* Left Column (Inputs & Visual) */}
-        <div className="flex flex-col w-full lg:w-[450px] flex-none gap-6">
+        <div className="flex flex-col w-full lg:w-[450px] flex-none gap-4 lg:gap-6">
            
            {/* BOX 1: Controls (Yellow Box equivalent) */}
            <div className="flex-none">
@@ -133,7 +139,7 @@ export default function BMISection() {
         </div>
         
         {/* Right Column (Result & Table) */}
-        <div className="w-full lg:flex-1 min-w-0 overflow-hidden flex flex-col gap-6">
+        <div className="w-full lg:flex-1 min-w-0 overflow-hidden flex flex-col gap-4 lg:gap-6">
            
            {/* BOX 3: Result */}
            <div className="flex-none">
