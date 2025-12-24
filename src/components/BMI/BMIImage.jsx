@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getSliderRanges } from '../../utils/bmiUtils';
 
 // Helper Component for Imperial Input to handle format state
-const ImperialHeightInput = ({ inches, onChange, min, max }) => {
+const ImperialHeightInput = ({ inches, onChange, min, max, placeholder }) => {
   const [localVal, setLocalVal] = useState('');
   
   const format = (val) => {
@@ -54,7 +54,8 @@ const ImperialHeightInput = ({ inches, onChange, min, max }) => {
         onChange={(e) => setLocalVal(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-        className="w-20 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-transparent"
+        placeholder={placeholder}
+        className="w-20 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
       />
   );
 };
@@ -173,7 +174,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 min={ranges.hMin}
                 max={ranges.hMax}
                 step={ranges.hStep}
-                value={height}
+                value={height === '' ? (unit === 'metric' ? 175 : 69) : height}
                 onChange={(e) => setHeight(e.target.value)}
                 className={`absolute ${sliderClasses}`}
                 style={{ 
@@ -191,7 +192,8 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                     onChange={handleManualInput(setHeight, ranges.hMax)}
                     onBlur={handleBlur(setHeight, ranges.hMin, ranges.hMax, height)}
                     onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                    className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-transparent"
+                    placeholder="175"
+                    className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-500"
                   />
               ) : (
                   <div className='[&>input]:bg-transparent [&>input]:text-white [&>input]:border-slate-600 [&>input]:w-20 [&>input]:text-center [&>input]:text-xl [&>input]:font-black [&>input]:border-b-2 [&>input]:focus:outline-none'>
@@ -200,6 +202,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                        onChange={setHeight}
                        min={ranges.hMin}
                        max={ranges.hMax}
+                       placeholder="5'9&quot;"
                     />
                   </div>
               )}
@@ -265,7 +268,8 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 onChange={handleManualInput(setWeight, ranges.wMax)}
                 onBlur={handleBlur(setWeight, ranges.wMin, ranges.wMax, weight)}
                 onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-transparent"
+                placeholder={unit === 'metric' ? "70" : "154"}
+                className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
              />
              <span className="text-xl font-black text-slate-500">{unit === 'metric' ? 'kg' : 'lb'}</span>
            </div>
@@ -275,7 +279,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
             min={ranges.wMin}
             max={ranges.wMax}
             step={ranges.wStep}
-            value={weight}
+            value={weight === '' ? (unit === 'metric' ? 70 : 154) : weight}
             onChange={(e) => setWeight(e.target.value)}
             className={`${sliderClasses}`}
           />

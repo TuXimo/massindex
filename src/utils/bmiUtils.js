@@ -112,8 +112,8 @@ export const getBmiInfo = (weight, height, unit, userConfig = null) => {
 
 export const getSliderRanges = (unit, mode, age) => {
     // Default Adult Ranges
-    const defaultMetric = { hMin: 140, hMax: 220, hStep: 1, wMin: 40, wMax: 160, wStep: 0.5 };
-    const defaultImperial = { hMin: 55, hMax: 87, hStep: 1, wMin: 90, wMax: 350, wStep: 1 }; // h in inches, w in lbs
+    const defaultMetric = { hMin: 140, hMax: 220, hStep: 5, wMin: 40, wMax: 160, wStep: 5 };
+    const defaultImperial = { hMin: 55, hMax: 87, hStep: 2, wMin: 90, wMax: 350, wStep: 10 }; // h in inches, w in lbs
 
     if (mode !== 'child') {
         return unit === 'metric' ? defaultMetric : defaultImperial;
@@ -154,10 +154,10 @@ export const getSliderRanges = (unit, mode, age) => {
         return {
             hMin: Math.floor(hMin),
             hMax: Math.ceil(hMax),
-            hStep: 1,
+            hStep: 5,
             wMin: Math.floor(wMin),
             wMax: Math.ceil(wMax),
-            wStep: 0.5
+            wStep: 5
         };
     } else {
         // Imperial
@@ -170,10 +170,10 @@ export const getSliderRanges = (unit, mode, age) => {
         return {
             hMin: Math.floor(hMin),
             hMax: Math.ceil(hMax),
-            hStep: 1, // inches
+            hStep: 2, // inches (matches table step)
             wMin: Math.floor(wMin),
             wMax: Math.ceil(wMax),
-            wStep: 1 // lbs
+            wStep: 10 // lbs (matches table step)
         };
     }
 };

@@ -3,15 +3,24 @@ import { useTranslation } from 'react-i18next';
 
 export default function BMIResult({ bmi }) {
     const { t } = useTranslation();
-  if (!bmi) return null;
 
-  const bmiNum = parseFloat(bmi);
+  const bmiNum = bmi ? parseFloat(bmi) : 0;
   let category = '';
   let message = '';
   let accentColor = '';
   let badgeColor = '';
 
-  if (bmiNum < 18.5) {
+  if (!bmi) {
+     // Placeholder State
+     category = t('result.waiting'); // or hardcoded "---" if key missing, but let's use a safe fallback or empty
+     if (!category || category === 'result.waiting') category = ''; 
+     
+     message = t('result.enterData'); // "Ingresa tus datos..."
+     if (!message || message === 'result.enterData') message = '';
+
+     accentColor = 'border-slate-700 shadow-none bg-slate-800/30';
+     badgeColor = 'bg-slate-700 text-slate-400';
+  } else if (bmiNum < 18.5) {
     category = t('result.categories.underweight');
     message = t('result.messages.underweight');
     accentColor = 'border-blue-500 shadow-blue-500/20';
@@ -44,20 +53,20 @@ export default function BMIResult({ bmi }) {
   }
 
   return (
-    <div className={`mt-8 p-6 bg-slate-800/50 backdrop-blur-sm border-l-8 ${accentColor} rounded-r-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+    <div className={`p-6 bg-slate-800/50 backdrop-blur-sm border-l-8 ${accentColor} rounded-r-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all min-h-[174px] flex flex-col justify-center`}>
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
             {t('result.analysisResult')}
           </p>
-          <h2 className="text-4xl font-bold uppercase tracking-tighter text-white">
+          <h2 className={`text-4xl font-bold uppercase tracking-tighter ${!bmi ? 'text-slate-600' : 'text-white'}`}>
             {category}
           </h2>
         </div>
         
         <div className="flex-1 border-slate-700/50 md:pl-6 text-center md:text-left flex flex-col md:items-end">
-             <div className={`inline-block px-4 py-2 ${badgeColor} text-white font-black text-xl mb-2 rounded-lg shadow-lg`}>
-                {t('result.bmi')} {bmi}
+             <div className={`inline-block px-4 py-2 ${badgeColor} text-white font-black text-xl mb-2 rounded-lg shadow-lg transition-colors`}>
+                {t('result.bmi')} {bmi || '-'}
              </div>
              <p className="font-medium text-sm leading-relaxed text-slate-300 md:text-right max-w-md">
                 {message}

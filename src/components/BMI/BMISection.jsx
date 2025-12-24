@@ -9,8 +9,8 @@ import BMIControls from './BMIControls';
 import { getBmiInfo } from '../../utils/bmiUtils';
 
 export default function BMISection() {
-  const [weight, setWeight] = useState(70); 
-  const [height, setHeight] = useState(175);
+  const [weight, setWeight] = useState(''); 
+  const [height, setHeight] = useState('');
   const [bmi, setBmi] = useState(null);
   const [activeTab, setActiveTab] = useState('visual'); // 'calculator' or 'visual' - default to visual
   const [unit, setUnit] = useState('metric'); // 'metric' or 'imperial'
@@ -69,6 +69,27 @@ export default function BMISection() {
     return () => clearTimeout(timer);
   }, []);
 
+  /* 
+   * Enhanced Input Handlers 
+   * Requirement: If user enters one value (e.g. Height), autofill the other (e.g. Weight) with default
+   * Defaults: Weight=70kg (154lbs), Height=175cm (69in)
+   */
+  const handleWeightChange = (newVal) => {
+    setWeight(newVal);
+    // If we have a new weight value and height is currently empty, autofill height
+    if (newVal && !height) {
+        setHeight(unit === 'metric' ? '175' : '69'); 
+    }
+  };
+
+  const handleHeightChange = (newVal) => {
+    setHeight(newVal);
+    // If we have a new height value and weight is currently empty, autofill weight
+    if (newVal && !weight) {
+        setWeight(unit === 'metric' ? '70' : '154');
+    }
+  };
+
   return (
     <section id="bmi-main-view" ref={sectionRef} className="w-full max-w-[95rem] min-h-[800px] flex flex-col">
       <div className="flex flex-col lg:flex-row gap-8 items-stretch flex-1 min-h-0">
@@ -89,20 +110,26 @@ export default function BMISection() {
            </div>
 
            {/* BOX 2: Visualization / Info */}
-   <div className="flex-none min-h-[400px]">
-     {activeTab === 'calculator' ? (
-        <BMICalculator weight={weight} height={height} setWeight={setWeight} setHeight={setHeight} unit={unit} />
-     ) : (
-        <BMIImage 
-            weight={weight} 
-            height={height} 
-            setWeight={setWeight} 
-            setHeight={setHeight} 
-            unit={unit} 
-            userConfig={userConfig} // Pass config
-        />
-     )}
-   </div>
+           <div className="flex-none min-h-[400px]">
+             {activeTab === 'calculator' ? (
+                <BMICalculator 
+                    weight={weight} 
+                    height={height} 
+                    setWeight={handleWeightChange} 
+                    setHeight={handleHeightChange} 
+                    unit={unit} 
+                />
+             ) : (
+                <BMIImage 
+                    weight={weight} 
+                    height={height} 
+                    setWeight={handleWeightChange} 
+                    setHeight={handleHeightChange} 
+                    unit={unit} 
+                    userConfig={userConfig} // Pass config
+                />
+             )}
+           </div>
         </div>
         
         {/* Right Column (Result & Table) */}
