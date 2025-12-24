@@ -100,7 +100,15 @@ export default function BMISection() {
               </div>
            </div>
            
-           <BMITable userWeight={parseFloat(weight)} userHeight={parseFloat(height)} unit={unit} />
+           <BMITable 
+              userWeight={parseFloat(weight)} 
+              userHeight={parseFloat(height)} 
+              unit={unit} 
+              onSelect={(w, h) => {
+                setWeight(w);
+                setHeight(h);
+              }}
+           />
         </div>
       </div>
       

@@ -1,8 +1,40 @@
 import { useRef, useEffect, useState } from 'react';
 
-export default function BMITable({ userWeight, userHeight, unit = 'metric' }) {
+export default function BMITable({ userWeight, userHeight, unit = 'metric', onSelect }) {
   const containerRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [startY, setStartY] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setStartY(e.pageY - containerRef.current.offsetTop);
+    setScrollLeft(containerRef.current.scrollLeft);
+    setScrollTop(containerRef.current.scrollTop);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const y = e.pageY - containerRef.current.offsetTop;
+    const walkX = (x - startX); 
+    const walkY = (y - startY);
+    containerRef.current.scrollLeft = scrollLeft - walkX;
+    containerRef.current.scrollTop = scrollTop - walkY;
+  };
 
   // Conversion Helpers
   const kgToLbs = (kg) => kg * 2.20462;
@@ -125,7 +157,14 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric' }) {
         </div>
       </div>
       
-      <div className="w-full overflow-auto border-r-2 border-b-2 border-black max-h-[500px] scrollbar-hide relative" ref={containerRef}>
+      <div 
+        className={`w-full overflow-auto border-r-2 border-b-2 border-black max-h-[500px] scrollbar-hide relative ${isDragging ? 'cursor-grabbing' : ''}`} 
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+      >
           <table className="w-full text-xs text-center border-collapse border-2 border-black" style={{ fontSize: `${0.6 * zoomLevel}rem` }}>
             <thead>
               <tr>
@@ -173,8 +212,9 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric' }) {
                       <td 
                         key={`${h}-${w}`} 
                         id={active ? "active-bmi-cell" : undefined}
+                        onDoubleClick={() => onSelect && onSelect(w, h)}
                         style={{ width: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
-                        className={`p-1 border border-black font-medium ${
+                        className={`p-1 border border-black font-medium select-none ${
                           active 
                             ? 'bg-black text-white font-black ring-2 ring-black relative z-10' 
                             : `${getBMIColor(bmi)} hover:bg-white hover:z-10 relative`
