@@ -36,7 +36,16 @@ export default function BMICalculator({ weight, height, setWeight, setHeight }) 
           />
         </div>
       </div>
-       <div className="mt-6 text-xs text-center font-bold text-gray-500 uppercase">
+      
+       <div className="mt-6 pt-6 border-t-2 border-dashed border-gray-300">
+           <p className="text-xs font-bold text-gray-500 uppercase text-center mb-3">Fórmula</p>
+           <div className="bg-gray-100 p-3 border-2 border-black text-center">
+             <span className="font-black text-lg block">IMC = Peso / Altura²</span>
+             <span className="text-xs font-bold text-gray-500 block mt-1">(kg / m²)</span>
+           </div>
+       </div>
+
+        <div className="mt-6 text-xs text-center font-bold text-gray-500 uppercase">
           * Los resultados se actualizan automáticamente
        </div>
     </div>
