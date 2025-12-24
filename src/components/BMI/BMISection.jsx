@@ -15,11 +15,17 @@ export default function BMISection() {
   const [activeTab, setActiveTab] = useState('visual'); // 'calculator' or 'visual' - default to visual
   const [unit, setUnit] = useState('metric'); // 'metric' or 'imperial'
 
-  const { language, setLanguage, userConfig } = useConfig();
+  const { language, setLanguage, userConfig, setThemeColor } = useConfig();
   
   // Calculate BMI Info dynamically for styling controls
   // We pass userConfig to allow future calculation updates for children
   const bmiInfo = getBmiInfo(weight, height, unit, userConfig);
+
+  useEffect(() => {
+     if (bmiInfo?.color) {
+         setThemeColor(bmiInfo.color);
+     }
+  }, [bmiInfo.color, setThemeColor]);
 
   const handleUnitChange = (newUnit) => {
     if (newUnit === unit) return;

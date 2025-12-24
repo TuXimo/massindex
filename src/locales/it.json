@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "Indice di Massa Corporea",
+    "settings": "Impostazioni"
+  },
+  "common": {
+    "height": "Altezza",
+    "weight": "Peso"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "calcMode": "Modalità di Calcolo",
+    "adultStandard": "Adulto Standard",
+    "childTeen": "Bambino / Adolescente",
+    "adultDesc": "Calcolo BMI standard per adulti sopra i 20 anni.",
+    "childDesc": "Calcolo aggiustato per percentili (OMS/CDC) dai 2 ai 19 anni.",
+    "age": "Età (2-20 Anni)",
+    "biologicalSex": "Sesso Biologico",
+    "note": "Nota:",
+    "noteDesc": "Il calcolo per i minori utilizza curve di crescita (percentili) che richiedono età e sesso precisi per essere validi.",
+    "validAge": "Età valida richiesta (2-20)",
+    "done": "Fatto"
+  },
+  "controls": {
+    "calculator": "CALCOLATRICE",
+    "visual": "VISUALE",
+    "metric": "METRICO",
+    "imperial": "IMPERIALE"
+  },
+  "result": {
+    "analysisResult": "Risultato dell'Analisi",
+    "bmi": "BMI:",
+    "categories": {
+      "underweight": "Sottopeso",
+      "normal": "Normopeso",
+      "overweight": "Sovrappeso",
+      "obesity1": "Obesità I",
+      "obesity2": "Obesità II",
+      "obesity3": "Obesità III"
+    },
+    "messages": {
+      "underweight": "Il tuo BMI è sotto la fascia salutare. Si consiglia di consultare uno specialista.",
+      "normal": "Eccellente! Hai un peso forma. Mantieni le tue buone abitudini.",
+      "overweight": "Il tuo BMI indica sovrappeso. Piccoli cambiamenti nella dieta e nell'attività possono aiutare.",
+      "obesity1": "Il tuo BMI indica obesità di classe I. È importante curare la salute cardiovascolare.",
+      "obesity2": "Il tuo BMI indica obesità di classe II. Consulta un medico per un piano personalizzato.",
+      "obesity3": "Il tuo BMI indica obesità patologica. È cruciale cercare un parere medico prioritario."
+    }
+  },
+  "table": {
+    "pediatric": "Tabella Pediatrica",
+    "reference": "Tabella di Riferimento",
+    "imperial": "(Imperiale)",
+    "years": "anni",
+    "headers": {
+      "metric": "ALT \\ PESO",
+      "imperial": "HGT \\ WGT"
+    },
+    "footer": "* Trova l'intersezione tra la tua altezza e il peso."
+  },
+  "footer": {
+    "designedFor": "Progettato per la tua salute."
+  }
+}

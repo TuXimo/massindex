@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "身体质量指数 (BMI)",
+    "settings": "设置"
+  },
+  "common": {
+    "height": "身高",
+    "weight": "体重"
+  },
+  "settings": {
+    "title": "设置",
+    "calcMode": "计算模式",
+    "adultStandard": "成人标准",
+    "childTeen": "儿童 / 青少年",
+    "adultDesc": "20岁以上成人的标准BMI计算。",
+    "childDesc": "2至19岁的百分位调整计算 (WHO/CDC)。",
+    "age": "年龄 (2-20岁)",
+    "biologicalSex": "生理性别",
+    "note": "注意:",
+    "noteDesc": "未成年人的计算使用生长图表（百分位数），需要精确的年龄和性别才能有效。",
+    "validAge": "需要有效年龄 (2-20)",
+    "done": "完成"
+  },
+  "controls": {
+    "calculator": "计算器",
+    "visual": "视觉",
+    "metric": "公制",
+    "imperial": "英制"
+  },
+  "result": {
+    "analysisResult": "分析结果",
+    "bmi": "BMI:",
+    "categories": {
+      "underweight": "体重过轻",
+      "normal": "正常体重",
+      "overweight": "超重",
+      "obesity1": "肥胖 I级",
+      "obesity2": "肥胖 II级",
+      "obesity3": "肥胖 III级"
+    },
+    "messages": {
+      "underweight": "您的BMI低于健康范围。建议咨询专家。",
+      "normal": "太棒了！您的体重很健康。保持良好的习惯。",
+      "overweight": "您的BMI显示超重。饮食和活动的微小改变会有所帮助。",
+      "obesity1": "您的BMI显示I级肥胖。关注心血管健康很重要。",
+      "obesity2": "您的BMI显示II级肥胖。请咨询医生制定个性化计划。",
+      "obesity3": "您的BMI显示病态肥胖。寻求主要医疗建议至关重要。"
+    }
+  },
+  "table": {
+    "pediatric": "儿科图表",
+    "reference": "参考图表",
+    "imperial": "(英制)",
+    "years": "岁",
+    "headers": {
+      "metric": "身高 \\ 体重",
+      "imperial": "身高 \\ 体重"
+    },
+    "footer": "* 找到您的身高和体重的交叉点。"
+  },
+  "footer": {
+    "designedFor": "专为您的健康设计。"
+  }
+}

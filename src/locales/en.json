@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "Body Mass Index",
+    "settings": "Settings"
+  },
+  "common": {
+    "height": "Height",
+    "weight": "Weight"
+  },
+  "settings": {
+    "title": "Settings",
+    "calcMode": "Calculation Mode",
+    "adultStandard": "Standard Adult",
+    "childTeen": "Child / Teen",
+    "adultDesc": "Standard BMI calculation for adults over 20 years.",
+    "childDesc": "Percentile-adjusted calculation (WHO/CDC) for 2 to 19 years.",
+    "age": "Age (2-20 Years)",
+    "biologicalSex": "Biological Sex",
+    "note": "Note:",
+    "noteDesc": "Calculation for minors uses growth charts (percentiles) which require precise age and sex to be valid.",
+    "validAge": "Valid Age Required (2-20)",
+    "done": "Done"
+  },
+  "controls": {
+    "calculator": "CALCULATOR",
+    "visual": "VISUAL",
+    "metric": "METRIC",
+    "imperial": "IMPERIAL"
+  },
+  "result": {
+    "analysisResult": "Analysis Result",
+    "bmi": "BMI:",
+    "categories": {
+      "underweight": "Underweight",
+      "normal": "Normal Weight",
+      "overweight": "Overweight",
+      "obesity1": "Obesity I",
+      "obesity2": "Obesity II",
+      "obesity3": "Obesity III"
+    },
+    "messages": {
+      "underweight": "Your BMI is below the healthy range. It is advisable to consult a specialist.",
+      "normal": "Excellent! You have a healthy weight. Keep up your good habits.",
+      "overweight": "Your BMI indicates overweight. Small changes in diet and activity can help.",
+      "obesity1": "Your BMI indicates Obesity Class I. It is important to look after your cardiovascular health.",
+      "obesity2": "Your BMI indicates Obesity Class II. Consult a doctor for a personalized plan.",
+      "obesity3": "Your BMI indicates Morbid Obesity. Seeking medical advice is crucial."
+    }
+  },
+  "table": {
+    "pediatric": "Pediatric Table",
+    "reference": "Reference Table",
+    "imperial": "(Imperial)",
+    "years": "years",
+    "headers": {
+      "metric": "HGT \\ WGT",
+      "imperial": "HGT \\ WGT"
+    },
+    "footer": "* Find the intersection of your height and weight."
+  },
+  "footer": {
+    "designedFor": "Designed for your health."
+  }
+}

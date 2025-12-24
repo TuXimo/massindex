@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "ボディマス指数 (BMI)",
+    "settings": "設定"
+  },
+  "common": {
+    "height": "身長",
+    "weight": "体重"
+  },
+  "settings": {
+    "title": "設定",
+    "calcMode": "計算モード",
+    "adultStandard": "大人 (標準)",
+    "childTeen": "子供 / 10代",
+    "adultDesc": "20歳以上の通常のBMI計算。",
+    "childDesc": "2〜19歳向けのパーセンタイル調整計算 (WHO/CDC)。",
+    "age": "年齢 (2-20歳)",
+    "biologicalSex": "生物学的性別",
+    "note": "注記:",
+    "noteDesc": "未成年の計算には、正確な年齢と性別が必要な成長曲線 (パーセンタイル) が使用されます。",
+    "validAge": "有効な年齢が必要です (2-20)",
+    "done": "完了"
+  },
+  "controls": {
+    "calculator": "計算機",
+    "visual": "ビジュアル",
+    "metric": "メートル法",
+    "imperial": "ヤード・ポンド法"
+  },
+  "result": {
+    "analysisResult": "分析結果",
+    "bmi": "BMI:",
+    "categories": {
+      "underweight": "低体重",
+      "normal": "普通体重",
+      "overweight": "過体重",
+      "obesity1": "肥満 (1度)",
+      "obesity2": "肥満 (2度)",
+      "obesity3": "肥満 (3度)"
+    },
+    "messages": {
+      "underweight": "BMIは健康的な範囲を下回っています。専門家に相談することをお勧めします。",
+      "normal": "素晴らしい！健康的な体重です。良い習慣を続けましょう。",
+      "overweight": "BMIは過体重を示しています。食事と運動を少し変えるだけで改善できます。",
+      "obesity1": "BMIは肥満 (1度) を示しています。心血管の健康に注意することが重要です。",
+      "obesity2": "BMIは肥満 (2度) を示しています。医師に相談して個別の計画を立ててください。",
+      "obesity3": "BMIは高度な肥満を示しています。優先的に医師の指導を受けることが重要です。"
+    }
+  },
+  "table": {
+    "pediatric": "小児用チャート",
+    "reference": "参照チャート",
+    "imperial": "(ヤード・ポンド法)",
+    "years": "歳",
+    "headers": {
+      "metric": "身長 \\ 体重",
+      "imperial": "HGT \\ WGT"
+    },
+    "footer": "* 身長と体重の交差点を見つけてください。"
+  },
+  "footer": {
+    "designedFor": "あなたの健康のために設計されました。"
+  }
+}

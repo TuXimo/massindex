@@ -1,7 +1,9 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSliderRanges } from '../../utils/bmiUtils';
 
 export default function BMITable({ userWeight, userHeight, unit = 'metric', onSelect, userConfig = {} }) {
+  const { t } = useTranslation();
   const containerRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
@@ -173,13 +175,13 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
       <div className="flex justify-between items-center border-b border-slate-700 pb-2 mb-6">
         <div className="flex items-center gap-4">
             <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2">
-              {userConfig?.mode === 'child' ? 'Tabla Pediátrica' : 'Tabla de Referencia'} 
-              {unit === 'imperial' && <span className="text-slate-500 text-sm">(Imperial)</span>}
+              {userConfig?.mode === 'child' ? t('table.pediatric') : t('table.reference')} 
+              {unit === 'imperial' && <span className="text-slate-500 text-sm">{t('table.imperial')}</span>}
             </h3>
             {userConfig?.mode === 'child' && (
                 <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90">
                     <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20">
-                        {userConfig.age} años
+                        {userConfig.age} {t('table.years')}
                     </span>
                     <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20">
                         {userConfig.gender === 'male' ? 'M' : 'F'}
@@ -220,7 +222,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                   style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
                   className="p-1 bg-slate-950 text-slate-400 font-bold sticky left-0 top-0 z-50 leading-3 shadow-[2px_2px_10px_rgba(0,0,0,0.5)]"
                 >
-                  {unit === 'metric' ? 'ALT \\ PESO' : 'HGT \\ WGT'}
+                  {unit === 'metric' ? t('table.headers.metric') : t('table.headers.imperial')}
                 </th>
                 {weights.map((w) => {
                    const isColActive = showHighlight && currentWeight === w;
@@ -310,7 +312,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
           </table>
       </div>
       <div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-center text-slate-500">
-        * Encuentra la intersección de tu altura y peso.
+        {t('table.footer')}
       </div>
     </div>
   );

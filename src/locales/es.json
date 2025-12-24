@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "Índice de Masa Muscular",
+    "settings": "Configuración"
+  },
+  "common": {
+    "height": "Altura",
+    "weight": "Peso"
+  },
+  "settings": {
+    "title": "Configuración",
+    "calcMode": "Modo de Cálculo",
+    "adultStandard": "Adulto Standard",
+    "childTeen": "Niño / Adolescente",
+    "adultDesc": "Cálculo de IMC estándar para mayores de 20 años.",
+    "childDesc": "Cálculo ajustado por percentiles (OMS/CDC) para 2 a 19 años.",
+    "age": "Edad (2-20 Años)",
+    "biologicalSex": "Sexo biológico",
+    "note": "Nota:",
+    "noteDesc": "El cálculo para menores utiliza tablas de crecimiento (percentiles) que requieren edad y sexo precisos para ser válidos.",
+    "validAge": "Edad válida requerida (2-20)",
+    "done": "Listo"
+  },
+  "controls": {
+    "calculator": "CALCULADORA",
+    "visual": "VISUAL",
+    "metric": "MÉTRICO",
+    "imperial": "IMPERIAL"
+  },
+  "result": {
+    "analysisResult": "Resultado del Análisis",
+    "bmi": "IMC:",
+    "categories": {
+      "underweight": "Bajo Peso",
+      "normal": "Peso Normal",
+      "overweight": "Sobrepeso",
+      "obesity1": "Obesidad I",
+      "obesity2": "Obesidad II",
+      "obesity3": "Obesidad III"
+    },
+    "messages": {
+      "underweight": "Tu IMC está por debajo del rango saludable. Es recomendable consultar con un especialista.",
+      "normal": "¡Excelente! Tienes un peso saludable. Mantén tus buenos hábitos.",
+      "overweight": "Tu IMC indica sobrepeso. Pequeños cambios en tu dieta y actividad pueden ayudar.",
+      "obesity1": "Tu IMC indica obesidad grado I. Es importante cuidar tu salud cardiovascular.",
+      "obesity2": "Tu IMC indica obesidad grado II. Consulta a un médico para un plan personalizado.",
+      "obesity3": "Tu IMC indica obesidad mórbida. Es crucial buscar orientación médica prioritaria."
+    }
+  },
+  "table": {
+    "pediatric": "Tabla Pediátrica",
+    "reference": "Tabla de Referencia",
+    "imperial": "(Imperial)",
+    "years": "años",
+    "headers": {
+      "metric": "ALT \\ PESO",
+      "imperial": "HGT \\ WGT"
+    },
+    "footer": "* Encuentra la intersección de tu altura y peso."
+  },
+  "footer": {
+    "designedFor": "Diseñado para tu salud."
+  }
+}

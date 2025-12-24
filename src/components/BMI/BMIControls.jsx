@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function BMIControls({ 
   activeTab, 
@@ -9,6 +10,7 @@ export default function BMIControls({
   setLanguage,
   bmiInfo
 }) {
+  const { t } = useTranslation();
   
   // Dynamic Text Style for Active State
   const activeTextStyle = {
@@ -24,8 +26,9 @@ export default function BMIControls({
   
   // Helper to get button class
   const getButtonClass = (isActive) => 
-      `relative z-20 w-full h-full text-[12px] font-bold uppercase tracking-widest rounded-full transition-all duration-300 flex items-center justify-center gap-2 
-       bg-transparent border-none hover:border-none focus:outline-none focus:ring-0
+      `relative z-20 w-full h-full text-[12px] font-bold uppercase transition-all duration-300 flex items-center justify-center gap-2 
+       bg-transparent border-none hover:border-none focus:outline-none focus:ring-0 whitespace-nowrap
+       ${language === 'ja' ? '' : 'tracking-widest'}
        ${isActive ? '' : 'text-slate-400 hover:text-white'}`;
 
   // Container Class
@@ -68,7 +71,7 @@ export default function BMIControls({
                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 17h2" />
                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 17h2" />
                   </svg>
-                  <span>CALCULADORA</span>
+                  <span>{t('controls.calculator')}</span>
                 </button>
                 <button 
                    onClick={() => setActiveTab('visual')}
@@ -79,7 +82,7 @@ export default function BMIControls({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <span>VISUAL</span>
+                  <span>{t('controls.visual')}</span>
                 </button>
              </div>
          </div>
@@ -99,7 +102,7 @@ export default function BMIControls({
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
                   </svg>
-                  <span>METRIC</span>
+                  <span>{t('controls.metric')}</span>
                 </button>
                 <button 
                    onClick={() => handleUnitChange('imperial')}
@@ -110,7 +113,7 @@ export default function BMIControls({
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0I12 21M12 20.25h.008v.008H12v-.008z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 6h13.5" />
                    </svg>
-                  <span>IMPERIAL</span>
+                  <span>{t('controls.imperial')}</span>
                 </button>
              </div>
          </div>

@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "Indice de Masse Corporelle",
+    "settings": "Paramètres"
+  },
+  "common": {
+    "height": "Taille",
+    "weight": "Poids"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "calcMode": "Mode de Calcul",
+    "adultStandard": "Adulte Standard",
+    "childTeen": "Enfant / Adolescent",
+    "adultDesc": "Calcul IMC standard pour adultes de plus de 20 ans.",
+    "childDesc": "Calcul ajusté par centiles (OMS/CDC) pour les 2 à 19 ans.",
+    "age": "Âge (2-20 Ans)",
+    "biologicalSex": "Sexe Biologique",
+    "note": "Note:",
+    "noteDesc": "Le calcul pour les mineurs utilise des courbes de croissance (centiles) qui nécessitent un âge et un sexe précis pour être valides.",
+    "validAge": "Âge valide requis (2-20)",
+    "done": "Terminé"
+  },
+  "controls": {
+    "calculator": "CALCULATRICE",
+    "visual": "VISUEL",
+    "metric": "MÉTRIQUE",
+    "imperial": "IMPÉRIAL"
+  },
+  "result": {
+    "analysisResult": "Résultat de l'analyse",
+    "bmi": "IMC:",
+    "categories": {
+      "underweight": "Insuffisance Pondérale",
+      "normal": "Poids Normal",
+      "overweight": "Surpoids",
+      "obesity1": "Obésité I",
+      "obesity2": "Obésité II",
+      "obesity3": "Obésité III"
+    },
+    "messages": {
+      "underweight": "Votre IMC est inférieur à la plage saine. Il est recommandé de consulter un spécialiste.",
+      "normal": "Excellent ! Vous avez un poids santé. Maintenez vos bonnes habitudes.",
+      "overweight": "Votre IMC indique un surpoids. De petits changements dans votre alimentation et activité peuvent aider.",
+      "obesity1": "Votre IMC indique une obésité de classe I. Il est important de surveiller votre santé cardiovasculaire.",
+      "obesity2": "Votre IMC indique une obésité de classe II. Consultez un médecin pour un plan personnalisé.",
+      "obesity3": "Votre IMC indique une obésité morbide. Il est crucial de consulter un médecin."
+    }
+  },
+  "table": {
+    "pediatric": "Tableau Pédiatrique",
+    "reference": "Tableau de Référence",
+    "imperial": "(Impérial)",
+    "years": "ans",
+    "headers": {
+      "metric": "TLC \\ PDS",
+      "imperial": "HGT \\ WGT"
+    },
+    "footer": "* Trouvez l'intersection de votre taille et poids."
+  },
+  "footer": {
+    "designedFor": "Conçu pour votre santé."
+  }
+}

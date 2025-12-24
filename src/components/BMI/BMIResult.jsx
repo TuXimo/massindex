@@ -1,5 +1,8 @@
 
+import { useTranslation } from 'react-i18next';
+
 export default function BMIResult({ bmi }) {
+    const { t } = useTranslation();
   if (!bmi) return null;
 
   const bmiNum = parseFloat(bmi);
@@ -9,33 +12,33 @@ export default function BMIResult({ bmi }) {
   let badgeColor = '';
 
   if (bmiNum < 18.5) {
-    category = 'Bajo Peso';
-    message = 'Tu IMC está por debajo del rango saludable. Es recomendable consultar con un especialista.';
+    category = t('result.categories.underweight');
+    message = t('result.messages.underweight');
     accentColor = 'border-blue-500 shadow-blue-500/20';
     badgeColor = 'bg-blue-500';
   } else if (bmiNum >= 18.5 && bmiNum < 25) {
-    category = 'Peso Normal';
-    message = '¡Excelente! Tienes un peso saludable. Mantén tus buenos hábitos.';
+    category = t('result.categories.normal');
+    message = t('result.messages.normal');
     accentColor = 'border-green-500 shadow-green-500/20';
     badgeColor = 'bg-green-500';
   } else if (bmiNum >= 25 && bmiNum < 30) {
-    category = 'Sobrepeso';
-    message = 'Tu IMC indica sobrepeso. Pequeños cambios en tu dieta y actividad pueden ayudar.';
+    category = t('result.categories.overweight');
+    message = t('result.messages.overweight');
     accentColor = 'border-yellow-500 shadow-yellow-500/20';
     badgeColor = 'bg-yellow-500';
   } else if (bmiNum >= 30 && bmiNum < 35) {
-    category = 'Obesidad I';
-    message = 'Tu IMC indica obesidad grado I. Es importante cuidar tu salud cardiovascular.';
+    category = t('result.categories.obesity1');
+    message = t('result.messages.obesity1');
     accentColor = 'border-orange-500 shadow-orange-500/20';
     badgeColor = 'bg-orange-500';
   } else if (bmiNum >= 35 && bmiNum < 40) {
-    category = 'Obesidad II';
-    message = 'Tu IMC indica obesidad grado II. Consulta a un médico para un plan personalizado.';
+    category = t('result.categories.obesity2');
+    message = t('result.messages.obesity2');
     accentColor = 'border-red-500 shadow-red-500/20';
     badgeColor = 'bg-red-500';
   } else {
-    category = 'Obesidad III';
-    message = 'Tu IMC indica obesidad mórbida. Es crucial buscar orientación médica prioritaria.';
+    category = t('result.categories.obesity3');
+    message = t('result.messages.obesity3');
     accentColor = 'border-red-700 shadow-red-900/20';
     badgeColor = 'bg-red-700';
   }
@@ -45,7 +48,7 @@ export default function BMIResult({ bmi }) {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
-            Resultado del Análisis
+            {t('result.analysisResult')}
           </p>
           <h2 className="text-4xl font-bold uppercase tracking-tighter text-white">
             {category}
@@ -54,7 +57,7 @@ export default function BMIResult({ bmi }) {
         
         <div className="flex-1 border-slate-700/50 md:pl-6 text-center md:text-left flex flex-col md:items-end">
              <div className={`inline-block px-4 py-2 ${badgeColor} text-white font-black text-xl mb-2 rounded-lg shadow-lg`}>
-                IMC: {bmi}
+                {t('result.bmi')} {bmi}
              </div>
              <p className="font-medium text-sm leading-relaxed text-slate-300 md:text-right max-w-md">
                 {message}

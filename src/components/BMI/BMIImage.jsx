@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSliderRanges } from '../../utils/bmiUtils';
 
 // Helper Component for Imperial Input to handle format state
@@ -59,6 +60,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max }) => {
 };
 
 export default function BMIImage({ weight, height, setWeight, setHeight, unit = 'metric', userConfig = {} }) {
+  const { t } = useTranslation();
   
   // Normalized values for visualization
   const metricWeight = unit === 'metric' ? parseFloat(weight) : parseFloat(weight) / 2.20462;
@@ -163,7 +165,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
         {/* Left: Height Slider (Vertical) */}
         <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-20">
            <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
-             Altura
+             {t('common.height')}
            </label>
            <div className="relative flex-1 flex items-center justify-center w-full min-h-[280px]">
               <input
@@ -254,7 +256,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
       {/* Bottom Section: Weight Slider */}
       <div className="pt-6 px-4">
          <div className="flex justify-between items-center mb-2">
-           <label className="text-xs font-bold uppercase text-slate-200">Peso ({unit === 'metric' ? 'kg' : 'lb'})</label>
+           <label className="text-xs font-bold uppercase text-slate-200">{t('common.weight')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
            <div className="flex items-center gap-1">
              <input 
                 type="text"

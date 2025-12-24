@@ -1,0 +1,64 @@
+{
+  "header": {
+    "title": "Körpermasseindex",
+    "settings": "Einstellungen"
+  },
+  "common": {
+    "height": "Größe",
+    "weight": "Gewicht"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "calcMode": "Berechnungsmodus",
+    "adultStandard": "Erwachsene Standard",
+    "childTeen": "Kind / Teenager",
+    "adultDesc": "Standard-BMI-Berechnung für Erwachsene über 20 Jahre.",
+    "childDesc": "Perzentil-angepasste Berechnung (WHO/CDC) für 2- bis 19-Jährige.",
+    "age": "Alter (2-20 Jahre)",
+    "biologicalSex": "Biologisches Geschlecht",
+    "note": "Hinweis:",
+    "noteDesc": "Die Berechnung für Minderjährige verwendet Wachstumskurven (Perzentile), die ein genaues Alter und Geschlecht erfordern.",
+    "validAge": "Gültiges Alter erforderlich (2-20)",
+    "done": "Fertig"
+  },
+  "controls": {
+    "calculator": "RECHNER",
+    "visual": "VISUELL",
+    "metric": "METRISCH",
+    "imperial": "IMPERIAL"
+  },
+  "result": {
+    "analysisResult": "Analyseergebnis",
+    "bmi": "BMI:",
+    "categories": {
+      "underweight": "Untergewicht",
+      "normal": "Normalgewicht",
+      "overweight": "Übergewicht",
+      "obesity1": "Adipositas I",
+      "obesity2": "Adipositas II",
+      "obesity3": "Adipositas III"
+    },
+    "messages": {
+      "underweight": "Ihr BMI liegt unter dem gesunden Bereich. Es wird empfohlen, einen Spezialisten zu konsultieren.",
+      "normal": "Ausgezeichnet! Sie haben ein gesundes Gewicht. Behalten Sie Ihre guten Gewohnheiten bei.",
+      "overweight": "Ihr BMI deutet auf Übergewicht hin. Kleine Änderungen bei Ernährung und Bewegung können helfen.",
+      "obesity1": "Ihr BMI deutet auf Adipositas Grad I hin. Es ist wichtig, auf Ihre Herz-Kreislauf-Gesundheit zu achten.",
+      "obesity2": "Ihr BMI deutet auf Adipositas Grad II hin. Konsultieren Sie einen Arzt für einen personalisierten Plan.",
+      "obesity3": "Ihr BMI deutet auf morbide Adipositas hin. Ärztlicher Rat ist dringend erforderlich."
+    }
+  },
+  "table": {
+    "pediatric": "Pädiatrische Tabelle",
+    "reference": "Referenztabelle",
+    "imperial": "(Imperial)",
+    "years": "Jahre",
+    "headers": {
+      "metric": "GRÖ \\ GEW",
+      "imperial": "HGT \\ WGT"
+    },
+    "footer": "* Finden Sie den Schnittpunkt Ihrer Größe und Ihres Gewichts."
+  },
+  "footer": {
+    "designedFor": "Entwickelt für Ihre Gesundheit."
+  }
+}
