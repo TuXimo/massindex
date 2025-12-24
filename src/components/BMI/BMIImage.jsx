@@ -4,62 +4,37 @@ import { useState, useEffect } from 'react';
 const ImperialHeightInput = ({ inches, onChange, min, max }) => {
   const [localVal, setLocalVal] = useState('');
   
-  // Helpers
   const format = (val) => {
     if (!val) return '';
     const feet = Math.floor(val / 12);
     const inc = Math.round(val % 12);
-    // If rounded inches is 12, bump feet (edge case)
     if (inc === 12) return `${feet + 1}'0"`;
     return `${feet}'${inc}"`;
   };
 
-  // Sync with parent prop
   useEffect(() => {
      setLocalVal(format(inches));
   }, [inches]);
 
   const handleBlur = () => {
-     // User finished typing, try to parse robustly
      let val = localVal;
      let parsed = null;
-
-     // 1. explicit feet'inches (5'8)
      const ftInMatch = val.match(/(\d+)'\s*(\d+)/);
-     
-     // 2. decimal/comma format (5.8 or 5,8) -> treat as feet.inches
-     // We look for single digit X (1-9) followed by separator and digits Y
      const decimalMatch = val.match(/^(\d+)[\.,](\d+)$/);
-
      if (ftInMatch) {
         parsed = parseInt(ftInMatch[1]) * 12 + parseInt(ftInMatch[2]);
      } else if (decimalMatch) {
-        // Heuristic: 5.3 -> 5'3"
         const feet = parseInt(decimalMatch[1]);
         const inches = parseInt(decimalMatch[2]);
-        // reasonable limit for feet usually < 9
-        if (feet < 9) {
-            parsed = feet * 12 + inches;
-        } else {
-            // if input is 68.5 -> just inches
-            parsed = parseFloat(val.replace(',', '.'));
-        }
+        if (feet < 9) { parsed = feet * 12 + inches; }
+        else { parsed = parseFloat(val.replace(',', '.')); }
      } else {
-        // Raw number check
         const num = parseFloat(val.replace(',', '.'));
         if (!isNaN(num)) {
-           // Heuristic: small number (< 8) likely feet? -> 5 -> 5'0"?
-           // If user types just "5", is it 5 inches or 5 feet?
-           // In height context, 5 inches is impossible. 5 feet (60) is likely.
-           // Let's assume < 10 is feet.
-           if (num < 10) {
-               parsed = num * 12; // treat as feet
-           } else {
-               parsed = num; // treat as inches
-           }
+           if (num < 10) { parsed = num * 12; }
+           else { parsed = num; }
         }
      }
-
      if (parsed !== null && !isNaN(parsed)) {
         if (parsed < min) parsed = min;
         if (parsed > max) parsed = max;
@@ -77,7 +52,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max }) => {
         onChange={(e) => setLocalVal(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-        className="w-20 text-center text-xl font-black border-b-2 border-black focus:outline-none focus:bg-gray-100 placeholder-transparent"
+        className="w-20 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-transparent"
       />
   );
 };
@@ -97,43 +72,69 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
      widthScale = 0.5 + (0.5 * (currentRatio / baseRatio)); 
   }
   const heightScale = metricHeight ? (metricHeight / 175) : 1;
-  const sliderClasses = "bg-gray-200 rounded-full appearance-none cursor-pointer border-2 border-black accent-black";
+  // Calculate BMI for dynamic coloring
+  const getBmiData = (w, h) => {
+    if (!w || !h) return { color: '#94A3B8', tailwindColor: 'bg-slate-400' }; // Default Slate
+    let val;
+    if (unit === 'metric') {
+        const hM = h / 100;
+        val = w / (hM * hM);
+    } else {
+        val = (703 * w) / (h * h);
+    }
+    
+    // Low: <18.5 (Blue), Normal: <25 (Green), Over: <30 (Yellow), Ob1: <35 (Orange), Ob2: <40 (Red), Ob3: >=40 (Dark Red)
+    // Using Tailwind palette colors for mapped values
+    if (val < 18.5) return { color: '#60A5FA', tailwindColor: 'text-blue-400', sliderAccent: 'accent-blue-400', shadow: 'shadow-blue-500/50' };
+    if (val < 25) return { color: '#4ADE80', tailwindColor: 'text-green-400', sliderAccent: 'accent-green-400', shadow: 'shadow-green-500/50' };
+    if (val < 30) return { color: '#FACC15', tailwindColor: 'text-yellow-400', sliderAccent: 'accent-yellow-400', shadow: 'shadow-yellow-500/50' };
+    if (val < 35) return { color: '#FB923C', tailwindColor: 'text-orange-400', sliderAccent: 'accent-orange-400', shadow: 'shadow-orange-500/50' };
+    if (val < 40) return { color: '#F87171', tailwindColor: 'text-red-400', sliderAccent: 'accent-red-400', shadow: 'shadow-red-500/50' };
+    return { color: '#EF4444', tailwindColor: 'text-red-500', sliderAccent: 'accent-red-500', shadow: 'shadow-red-900/50' };
+  };
+
+  const bmiStyle = getBmiData(metricWeight, unit === 'metric' ? height : parseFloat(height)); 
+  // Note: For imperial, height 'value' in state might be just inches if parsed correctly. 
+  // But wait, in ImperialHeightInput we setHeight with inches (number).
+  // In `BMISection`, we parse float. 
+  // So here, `metricWeight` is already kg. `metricHeight` is cm.
+  // The helper `getBmiData` effectively duplicates logic but we can just use the calculated `metricWeight` and `metricHeight` (converted to meters for metric formula).
+  // Actually easier: use `metricWeight` and `metricHeight`.
+  
+  const getBmiFromMetric = () => {
+     if (!metricWeight || !metricHeight) return { color: '#94A3B8', tailwindColor: 'text-slate-400', sliderAccent: 'accent-slate-400' };
+     const bmi = metricWeight / ((metricHeight/100) ** 2);
+     if (bmi < 18.5) return { color: '#60A5FA', tailwindColor: 'text-blue-400', sliderAccent: 'accent-blue-400', bg: 'bg-blue-400' };
+     if (bmi < 25) return { color: '#4ADE80', tailwindColor: 'text-green-400', sliderAccent: 'accent-green-400', bg: 'bg-green-400' };
+     if (bmi < 30) return { color: '#FACC15', tailwindColor: 'text-yellow-400', sliderAccent: 'accent-yellow-400', bg: 'bg-yellow-400' };
+     if (bmi < 35) return { color: '#FB923C', tailwindColor: 'text-orange-400', sliderAccent: 'accent-orange-400', bg: 'bg-orange-400' };
+     if (bmi < 40) return { color: '#F87171', tailwindColor: 'text-red-400', sliderAccent: 'accent-red-400', bg: 'bg-red-400' };
+     return { color: '#EF4444', tailwindColor: 'text-red-600', sliderAccent: 'accent-red-600', bg: 'bg-red-600' };
+  };
+  
+  const visualStyle = getBmiFromMetric();
+
+  // Custom Slider formatting
+  // We want a thick track. Standard input[type=range] is hard to style thick without custom CSS.
+  // We'll use a class that gives it a standard sleek look, and reliance on accent color.
+  const sliderClasses = `w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer ${visualStyle.sliderAccent} transition-colors duration-300`;
 
   const handleManualInput = (setter, max) => (e) => {
     let value = e.target.value;
-    
-    // Auto-replace comma with dot for metric convenience
     value = value.replace(',', '.');
-    
-    // Allow strictly digits and one dot
     if (/[^0-9.]/.test(value)) return;
-
-    // Prevent multiple dots
     if ((value.match(/\./g) || []).length > 1) return;
-
-    if (value === '') {
-        setter('');
-        return;
-    }
-
-    // Remove leading zeros
-    if (value.length > 1 && value.startsWith('0') && value[1] !== '.') {
-       value = value.replace(/^0+/, '');
-    }
-
+    if (value === '') { setter(''); return; }
+    if (value.length > 1 && value.startsWith('0') && value[1] !== '.') value = value.replace(/^0+/, '');
     setter(value);
   };
 
   const handleBlur = (setter, min, max, value) => () => {
       const num = parseFloat(value);
-      if (isNaN(num) || num < min) {
-          setter(min);
-      } else if (num > max) { // Fallback safety
-          setter(max);
-      }
+      if (isNaN(num) || num < min) { setter(min); }
+      else if (num > max) { setter(max); }
   };
 
-  // Helpers for Feet/Inches
   const formatFeetInches = (val) => {
     if (!val) return '';
     const feet = Math.floor(val / 12);
@@ -142,69 +143,27 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   };
 
   const parseFeetInches = (str) => {
-    // Try to match 5'8 or 5'8" or 5 8
     const match = str.match(/(\d+)'\s*(\d+)/);
-    if (match) {
-       return parseInt(match[1]) * 12 + parseInt(match[2]);
-    }
-    // Fallback: just number (inches)
+    if (match) return parseInt(match[1]) * 12 + parseInt(match[2]);
     return parseFloat(str);
   };
 
-  // Ranges
   const ranges = unit === 'metric' 
-    ? { 
-        hMin: 140, hMax: 220, hStep: 5,
-        wMin: 40, wMax: 160, wStep: 5 
-      }
-    : {
-        hMin: 55, hMax: 87, hStep: 1, // ~140-220 cm (Step 2 means 5'1, 5'3, 5'5...)
-        wMin: 90, wMax: 350, wStep: 1 // ~40-160 kg
-      };
+    ? { hMin: 140, hMax: 220, hStep: 5, wMin: 40, wMax: 160, wStep: 5 }
+    : { hMin: 55, hMax: 87, hStep: 1, wMin: 90, wMax: 350, wStep: 1 };
 
-  const getHeightDisplayValue = () => {
-      return unit === 'metric' ? height : formatFeetInches(height);
-  };
-
-  const handleHeightChange = (e) => {
-      let val = e.target.value;
-      if (unit === 'metric') {
-          handleManualInput(setHeight, ranges.hMax)(e);
-      } else {
-          // Allow typing freely, try to parse
-          // If valid parse, set it? No, that jumps. 
-          // Better UX: strict format or separate fields? 
-          // User asked for "5'8"". Let's try to parse on Blur mostly, or if simple format.
-          // Actually, standard manual input behavior for text is tricky. 
-          // Let's rely on onBlur to fix formatting, but allow typing digits and '
-          
-          // Strategy: For this inputs, simply allow valid chars.
-          const parsed = parseFeetInches(val);
-          if (!isNaN(parsed) && parsed > 0) {
-              setHeight(parsed);
-          }
-      }
-  };
-
-  // We need a local state for the text input to allow typing "5'"
-  // But for now, let's stick to the existing pattern: 
-  // The input value must be derived from `height`. 
-  // If we type "5'", parsing might fail or return 60.
-  // This is complex without a local scratchpad state. 
-  // Let's implement a blurred-based parser to avoid fighting the user.
-  
   return (
-    <div className="flex-col h-full min-h-[500px] flex p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+    <div className="flex-col flex p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
       
       {/* Top Section: Height Slider + Visualization */}
       <div className="flex-1 flex flex-row gap-6 relative min-h-0">
         
         {/* Left: Height Slider (Vertical) */}
         <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-20">
-           <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap">
+           <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
              Altura
            </label>
-           <div className="relative flex-1 flex items-center justify-center w-full min-h-[320px]">
+           <div className="relative flex-1 flex items-center justify-center w-full min-h-[280px]">
               <input
                 type="range"
                 min={ranges.hMin}
@@ -215,20 +174,11 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 className={`absolute ${sliderClasses}`}
                 style={{ 
                   transform: 'rotate(-90deg)', 
-                  width: '300px', // Increased per user request
-                  height: '16px', 
+                  width: '280px', 
                 }}
               />
            </div>
            <div className="flex flex-col items-center mt-2 w-full">
-               {/* 
-                  Switched input type based on unit.
-                  For Imperial, we use text to allow 5'8".
-                  Logic: On focus/change, user types string. On blur, we parse and set standard height.
-                  Problem: `value={height}` will always overwrite with formatted 5'8" on re-render.
-                  Solution: We need an "ImperialHeightInput" sub-component or robust handling.
-                  Let's use a specialized Input render.
-               */}
               {unit === 'metric' ? (
                   <input 
                     type="text"
@@ -237,78 +187,64 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                     onChange={handleManualInput(setHeight, ranges.hMax)}
                     onBlur={handleBlur(setHeight, ranges.hMin, ranges.hMax, height)}
                     onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                    className="w-16 text-center text-xl font-black border-b-2 border-black focus:outline-none focus:bg-gray-100 placeholder-transparent"
+                    className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-transparent"
                   />
               ) : (
-                  <ImperialHeightInput 
-                     inches={height} 
-                     onChange={setHeight}
-                     min={ranges.hMin}
-                     max={ranges.hMax}
-                  />
+                  <div className='[&>input]:bg-transparent [&>input]:text-white [&>input]:border-slate-600 [&>input]:w-20 [&>input]:text-center [&>input]:text-xl [&>input]:font-black [&>input]:border-b-2 [&>input]:focus:outline-none'>
+                    <ImperialHeightInput 
+                       inches={height} 
+                       onChange={setHeight}
+                       min={ranges.hMin}
+                       max={ranges.hMax}
+                    />
+                  </div>
               )}
-              <span className="text-xs font-bold">{unit === 'metric' ? 'cm' : 'ft/in'}</span>
+              <span className="text-xs font-bold text-slate-500">{unit === 'metric' ? 'cm' : 'ft/in'}</span>
            </div>
         </div>
 
         {/* Center: Human Visualization */}
-        <div className="flex-1 flex items-end justify-center relative overflow-hidden pb-4 border-b-2 border-black border-dashed">
+        <div className="flex-1 flex items-end justify-center relative overflow-hidden pb-4 border-b border-dashed border-slate-700">
            
-           {/* Background Grid Lines for Scale reference */}
-           <div className="absolute inset-0 pointer-events-none opacity-5 flex flex-col justify-between py-8">
-              <div className="w-full border-t-2 border-dashed border-black"></div>
-              <div className="w-full border-t-2 border-dashed border-black"></div>
-              <div className="w-full border-t-2 border-dashed border-black"></div>
-              <div className="w-full border-t-2 border-dashed border-black"></div>
-              <div className="w-full border-t-2 border-dashed border-black"></div>
-           </div>
+            {/* Background Ruler Lines */}
+            <div className="absolute inset-0 pointer-events-none opacity-10 flex flex-col justify-between py-8">
+               {[...Array(10)].map((_, i) => (
+                  <div key={i} className="w-full border-t border-slate-400 flex justify-between px-2">
+                     <span className="text-[10px] -mt-2 text-slate-500">{220 - (i * 8)}cm</span>
+                  </div>
+               ))}
+            </div>
 
-           {/* Dynamic SVG */}
-           {/* We increase the viewBox size to provide padding so the figure doesn't clip when scaling up */}
-           <svg 
-             viewBox="-100 -200 400 650" 
-             preserveAspectRatio="xMidYMax meet"
-             className="h-full w-full transition-all duration-300 ease-out"
-           >
-             {/* Base scaling group to fit baseline figure comfortably */}
-             <g transform="translate(100, 420)">
-                 <g 
-                    transform={`scale(${widthScale}, ${heightScale})`} 
-                    className="transition-transform duration-300"
-                 >
-                    {/* Drawing is centered at X=0, Feet at Y=0, growing upwards (negative Y) */}
-                    
-                    {/* Head - Center 0, -330 */}
-                    <circle cx="0" cy="-330" r="30" fill="black" />
-                    
-                    {/* Body Shape */}
-                    <path 
-                      d="M -40,-290 
-                         Q -50,-180 -40,-130 
-                         L -30,0 
-                         L -10,0 
-                         L -10,-120 
-                         L 10,-120 
-                         L 10,0 
-                         L 30,0 
-                         L 40,-130 
-                         Q 50,-180 40,-290 
-                         Z" 
-                      fill="black" 
-                    />
-                    
-                    {/* Arms */}
-                    <path 
-                      d="M -45,-280 Q -80,-230 -75,-160 L -55,-160 Q -60,-220 -40,-270 Z" 
-                      fill="black" 
-                    />
-                    <path 
-                      d="M 45,-280 Q 80,-230 75,-160 L 55,-160 Q 60,-220 40,-270 Z" 
-                      fill="black" 
-                    />
-                 </g>
-             </g>
-           </svg>
+            {/* Dynamic SVG with Glow Effect */}
+            <svg 
+              viewBox="-100 -60 400 520" 
+              preserveAspectRatio="xMidYMax meet"
+              className="h-full w-full transition-all duration-300 ease-out drop-shadow-2xl z-10"
+              style={{ filter: `drop-shadow(0 0 15px ${visualStyle.color}40)` }} 
+            >
+              <g transform="translate(100, 430)">
+                  {/* Shadow */}
+                  <ellipse cx="0" cy="20" rx="80" ry="15" fill="#000" opacity="0.2" filter="blur(5px)" />
+                  
+                  <g 
+                     transform={`scale(${widthScale}, ${heightScale})`} 
+                     className="transition-transform duration-300"
+                  >
+                     {/* Head */}
+                     <circle cx="0" cy="-330" r="30" fill={visualStyle.color} />
+                     
+                     {/* Body */}
+                     <path 
+                       d="M -40,-290 Q -50,-180 -40,-130 L -30,0 L -10,0 L -10,-120 L 10,-120 L 10,0 L 30,0 L 40,-130 Q 50,-180 40,-290 Z" 
+                       fill={visualStyle.color} 
+                     />
+                     
+                     {/* Arms */}
+                     <path d="M -45,-280 Q -80,-230 -75,-160 L -55,-160 Q -60,-220 -40,-270 Z" fill={visualStyle.color} />
+                     <path d="M 45,-280 Q 80,-230 75,-160 L 55,-160 Q 60,-220 40,-270 Z" fill={visualStyle.color} />
+                  </g>
+              </g>
+            </svg>
         </div>
 
       </div>
@@ -316,7 +252,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
       {/* Bottom Section: Weight Slider */}
       <div className="pt-6 px-4">
          <div className="flex justify-between items-center mb-2">
-           <label className="text-xs font-bold uppercase">Peso ({unit === 'metric' ? 'kg' : 'lb'})</label>
+           <label className="text-xs font-bold uppercase text-slate-200">Peso ({unit === 'metric' ? 'kg' : 'lb'})</label>
            <div className="flex items-center gap-1">
              <input 
                 type="text"
@@ -325,9 +261,9 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 onChange={handleManualInput(setWeight, ranges.wMax)}
                 onBlur={handleBlur(setWeight, ranges.wMin, ranges.wMax, weight)}
                 onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                className="w-16 text-center text-xl font-black border-b-2 border-black focus:outline-none focus:bg-gray-100 placeholder-transparent"
+                className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-transparent"
              />
-             <span className="text-xl font-black">{unit === 'metric' ? 'kg' : 'lb'}</span>
+             <span className="text-xl font-black text-slate-500">{unit === 'metric' ? 'kg' : 'lb'}</span>
            </div>
          </div>
          <input
@@ -337,9 +273,9 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
             step={ranges.wStep}
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className={`w-full h-4 ${sliderClasses}`}
+            className={`${sliderClasses}`}
           />
-          <div className="flex justify-between text-xs font-bold text-gray-400 mt-2">
+          <div className="flex justify-between text-xs font-bold text-slate-600 mt-2">
             <span>{ranges.wMin}{unit === 'metric' ? 'kg' : 'lb'}</span>
             <span>{ranges.wMax}{unit === 'metric' ? 'kg' : 'lb'}</span>
           </div>

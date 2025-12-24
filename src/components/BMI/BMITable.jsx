@@ -8,6 +8,40 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const [startY, setStartY] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
+  const [showHighlight, setShowHighlight] = useState(false);
+  const lastProps = useRef({ w: userWeight, h: userHeight, u: unit });
+  const highlightTimerRef = useRef(null);
+
+  const triggerHighlight = () => {
+    setShowHighlight(true);
+    if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+    highlightTimerRef.current = setTimeout(() => setShowHighlight(false), 1500);
+  };
+
+
+  useEffect(() => {
+    const weightChanged = userWeight !== lastProps.current.w;
+    const heightChanged = userHeight !== lastProps.current.h;
+    const unitChanged = unit !== lastProps.current.u;
+    
+    // Skip if nothing changed (handling initial render & strict mode)
+    if (!weightChanged && !heightChanged && !unitChanged) return;
+
+    // Update refs
+    lastProps.current = { w: userWeight, h: userHeight, u: unit };
+
+    // If unit changed, don't trigger highlight
+    if (unitChanged) return;
+
+    triggerHighlight();
+  }, [userWeight, userHeight, unit]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+        if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+    };
+  }, []);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -49,8 +83,8 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
       return `${feet}'${inches}"`;
   };
 
-  const currentWeight = userWeight;
-  const currentHeight = userHeight;
+  const currentWeight = userWeight ? parseFloat(userWeight) : null;
+  const currentHeight = userHeight ? parseFloat(userHeight) : null;
 
   const weights = (() => {
     const w = [];
@@ -133,23 +167,22 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   }, [currentWeight, currentHeight, zoomLevel]); // Depend on converted values
 
   return (
-    <div className="w-full max-w-full overflow-hidden p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative group">
-      <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-6">
-        <h3 className="font-black text-xl uppercase">
+      <div className="w-full max-w-full overflow-hidden p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl relative group transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
+      <div className="flex justify-between items-center border-b border-slate-700 pb-2 mb-6">
+        <h3 className="font-bold text-xl uppercase text-white tracking-wider">
           Tabla de Referencia {unit === 'imperial' && '(Imperial)'}
         </h3>
         <div className="flex gap-2">
-
             <button 
               onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}
-              className="w-8 h-8 flex items-center justify-center border-2 border-black font-bold hover:bg-black hover:text-white transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
               title="Reducir"
             >
               -
             </button>
             <button 
               onClick={() => setZoomLevel(prev => Math.min(1.5, prev + 0.1))}
-              className="w-8 h-8 flex items-center justify-center border-2 border-black font-bold hover:bg-black hover:text-white transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
               title="Aumentar"
             >
               +
@@ -158,78 +191,110 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
       </div>
       
       <div 
-        className={`w-full overflow-auto border-r-2 border-b-2 border-black max-h-[500px] scrollbar-hide relative ${isDragging ? 'cursor-grabbing' : ''}`} 
+        className={`w-full overflow-auto rounded-xl border border-slate-700/50 max-h-[500px] scrollbar-hide relative ${isDragging ? 'cursor-grabbing' : ''}`} 
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
       >
-          <table className="w-full text-xs text-center border-collapse border-2 border-black" style={{ fontSize: `${0.6 * zoomLevel}rem` }}>
+          <table className="w-full text-xs text-center border-separate border-spacing-0" style={{ fontSize: `${0.6 * zoomLevel}rem` }}>
             <thead>
               <tr>
                 <th 
                   style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
-                  className="p-1 border-2 border-black bg-black text-white font-bold sticky left-0 top-0 z-50 leading-3"
+                  className="p-1 bg-slate-950 text-slate-400 font-bold sticky left-0 top-0 z-50 leading-3 shadow-[2px_2px_10px_rgba(0,0,0,0.5)]"
                 >
                   {unit === 'metric' ? 'ALT \\ PESO' : 'HGT \\ WGT'}
                 </th>
-                {weights.map((w) => (
-                  <th 
-                    key={w} 
-                    style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
-                    className="p-1 border-2 border-black bg-black text-white font-bold sticky top-0 z-40"
-                  >
-                    {w}
-                  </th>
-                ))}
+                {weights.map((w) => {
+                   const isColActive = showHighlight && currentWeight === w;
+                   return (
+                    <th 
+                      key={w} 
+                      style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
+                      className={`p-1 bg-slate-950 font-bold sticky top-0 z-40 transition-colors duration-300 ${isColActive ? 'text-white' : 'text-slate-400'}`}
+                    >
+                      {w}
+                    </th>
+                   );
+                })}
               </tr>
             </thead>
             <tbody>
-              {heights.map((h) => (
-                <tr key={h}>
-                  <td 
-                    style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
-                    className="p-1 border-2 border-black bg-black text-white font-bold sticky left-0 z-30"
-                  >
-                    {formatHeight(h)}
-                  </td>
-                  {weights.map((w) => {
-                    const bmi = calculateCellBMI(w, h);
-                    const active = isHighlighted(w, h);
+              {heights.map((h) => {
+                const isRowActive = showHighlight && currentHeight === h;
+                return (
+                  <tr key={h}>
+                    <td 
+                      style={{ width: `${2.25 * zoomLevel}rem`, minWidth: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
+                      className={`p-1 bg-slate-950 font-bold sticky left-0 z-30 transition-colors duration-300 shadow-[2px_0_10px_rgba(0,0,0,0.3)] ${isRowActive ? 'text-white' : 'text-slate-400'}`}
+                    >
+                      {formatHeight(h)}
+                    </td>
+                    {weights.map((w) => {
+                      const bmi = calculateCellBMI(w, h);
+                      const isColActive = showHighlight && currentWeight === w;
+                      const active = isHighlighted(w, h);
+                      
+                      // Highlight logic: if active -> Glow. If row/col active -> brighter. Else -> standard.
+                      
+                      const getBMIColorClass = (val) => {
+                        const v = parseFloat(val);
+                        if (v < 18.5) return 'bg-blue-500/80'; // Low
+                        if (v < 25) return 'bg-green-500/80'; // Normal
+                        if (v < 30) return 'bg-yellow-500/80'; // Over
+                        if (v < 35) return 'bg-orange-500/80'; // Ob1
+                        if (v < 40) return 'bg-red-500/80'; // Ob2
+                        return 'bg-red-700/80'; // Ob3
+                      };
 
-                    const getBMIColor = (val) => {
-                      const v = parseFloat(val);
-                      if (v < 18.5) return 'bg-blue-200';
-                      if (v < 25) return 'bg-green-200';
-                      if (v < 30) return 'bg-yellow-200';
-                      if (v < 35) return 'bg-orange-200';
-                      if (v < 40) return 'bg-red-200';
-                      return 'bg-red-400';
-                    };
+                      const colorClass = getBMIColorClass(bmi);
+                      
+                      // Dynamic opacity/brightness based on selection
+                      // If this cell is in the active Row OR active Column, we make it fully opaque.
+                      // If it's the specific INTERSECTION, we add a glow.
+                      // Otherwise, slight transparency or dimmed? 
+                      // Actually, solid colors look better. Let's rely on borders/shadows for highlight.
 
-                    return (
-                      <td 
-                        key={`${h}-${w}`} 
-                        id={active ? "active-bmi-cell" : undefined}
-                        onDoubleClick={() => onSelect && onSelect(w, h)}
-                        style={{ width: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
-                        className={`p-1 border border-black font-medium select-none ${
-                          active 
-                            ? 'bg-black text-white font-black ring-2 ring-black relative z-10' 
-                            : `${getBMIColor(bmi)} hover:bg-white hover:z-10 relative`
-                        }`}
-                      >
-                        {bmi}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
+                      let cellStateClasses = `${colorClass} text-white font-bold`;
+                      
+                      if (active) {
+                          // precise intersection
+                          cellStateClasses = "bg-white text-slate-900 font-black shadow-[0_0_15px_rgba(255,255,255,0.7)] z-20 scale-110 rounded-sm";
+                      } else if (isRowActive || isColActive) {
+                          // In the crosshair
+                          cellStateClasses = `${colorClass.replace('/80', '')} text-white font-bold brightness-125 z-10`; // remove opacity, brighten
+                      } else if (showHighlight) {
+                          // Background noise ONLY when highlighting is active
+                          cellStateClasses += " opacity-40 grayscale-[0.5] transition-all duration-300";
+                      } else {
+                          // Standard vibrant state when idle
+                          cellStateClasses += " transition-all duration-300 hover:brightness-110";
+                      }
+
+                      return (
+                        <td 
+                          key={`${h}-${w}`} 
+                          id={active ? "active-bmi-cell" : undefined}
+                          onDoubleClick={() => {
+                            triggerHighlight();
+                            if (onSelect) onSelect(w, h);
+                          }}
+                          style={{ width: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem` }}
+                          className={`p-1 cursor-pointer select-none border-none outline-none ${cellStateClasses}`}
+                        >
+                          {bmi}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
       </div>
-      <div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-center">
+      <div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-center text-slate-500">
         * Encuentra la intersección de tu altura y peso.
       </div>
     </div>
