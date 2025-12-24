@@ -122,6 +122,17 @@ export default function BMITable({ userWeight, userHeight }) {
                   {weights.map((w) => {
                     const bmi = calculateCellBMI(w, h);
                     const active = isHighlighted(w, h);
+
+                    const getBMIColor = (val) => {
+                      const v = parseFloat(val);
+                      if (v < 18.5) return 'bg-blue-200';
+                      if (v < 25) return 'bg-green-200';
+                      if (v < 30) return 'bg-yellow-200';
+                      if (v < 35) return 'bg-orange-200';
+                      if (v < 40) return 'bg-red-200';
+                      return 'bg-red-400';
+                    };
+
                     return (
                       <td 
                         key={`${h}-${w}`} 
@@ -130,7 +141,7 @@ export default function BMITable({ userWeight, userHeight }) {
                         className={`p-1 border border-black font-medium ${
                           active 
                             ? 'bg-black text-white font-black ring-2 ring-black relative z-10' 
-                            : 'bg-white hover:bg-gray-100'
+                            : `${getBMIColor(bmi)} hover:bg-white hover:z-10 relative`
                         }`}
                       >
                         {bmi}

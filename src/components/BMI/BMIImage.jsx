@@ -14,8 +14,34 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
   // Common Slider Classes for consistency
   const sliderClasses = "bg-gray-200 rounded-full appearance-none cursor-pointer border-2 border-black accent-black";
 
+  const handleManualInput = (setter, max) => (e) => {
+    let value = e.target.value;
+    
+    // Allow empty string for better UX while deleting
+    if (value === '') {
+        setter('');
+        return;
+    }
+
+    // Remove leading zeros unless it's a decimal starting with 0 (e.g. 0.5)
+    if (value.length > 1 && value.startsWith('0') && value[1] !== '.') {
+       value = value.replace(/^0+/, '');
+    }
+
+    setter(value);
+  };
+
+  const handleBlur = (setter, min, max, value) => () => {
+      const num = parseFloat(value);
+      if (isNaN(num) || num < min) {
+          setter(min);
+      } else if (num > max) { // Fallback safety
+          setter(max);
+      }
+  };
+
   return (
-    <div className="p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full min-h-[500px]">
+    <div className="flex-col h-full min-h-[500px] flex p-6 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       
       {/* Top Section: Height Slider + Visualization */}
       <div className="flex-1 flex flex-row gap-6 relative min-h-0">
@@ -28,7 +54,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
                 type="range"
                 min="140"
                 max="220"
-                step="1"
+                step="5"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
                 className={`absolute ${sliderClasses}`}
@@ -39,7 +65,17 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
                 }}
               />
            </div>
-           <span className="text-xl font-black mt-2 w-full text-center">{height} <br/><span className="text-xs">cm</span></span>
+           <div className="flex flex-col items-center mt-2 w-full">
+              <input 
+                type="number"
+                step="0.1"
+                value={height}
+                onChange={handleManualInput(setHeight, 220)}
+                onBlur={handleBlur(setHeight, 140, 220, height)}
+                className="w-16 text-center text-xl font-black border-b-2 border-black focus:outline-none focus:bg-gray-100 placeholder-transparent"
+              />
+              <span className="text-xs font-bold">cm</span>
+           </div>
         </div>
 
         {/* Center: Human Visualization */}
@@ -108,13 +144,23 @@ export default function BMIImage({ weight, height, setWeight, setHeight }) {
       <div className="pt-6 px-4">
          <div className="flex justify-between items-center mb-2">
            <label className="text-xs font-bold uppercase">Peso (kg)</label>
-           <span className="text-xl font-black">{weight} kg</span>
+           <div className="flex items-center gap-1">
+             <input 
+                type="number"
+                step="0.1"
+                value={weight}
+                onChange={handleManualInput(setWeight, 160)}
+                onBlur={handleBlur(setWeight, 40, 160, weight)}
+                className="w-16 text-center text-xl font-black border-b-2 border-black focus:outline-none focus:bg-gray-100 placeholder-transparent"
+             />
+             <span className="text-xl font-black">kg</span>
+           </div>
          </div>
          <input
             type="range"
             min="40"
             max="160"
-            step="1"
+            step="5"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
             className={`w-full h-4 ${sliderClasses}`}
