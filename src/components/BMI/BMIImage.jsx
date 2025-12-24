@@ -150,7 +150,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
 
   const ranges = unit === 'metric' 
     ? { hMin: 140, hMax: 220, hStep: 5, wMin: 40, wMax: 160, wStep: 5 }
-    : { hMin: 55, hMax: 87, hStep: 1, wMin: 90, wMax: 350, wStep: 1 };
+    : { hMin: 55, hMax: 87, hStep: 2, wMin: 90, wMax: 350, wStep: 1 };
 
   return (
     <div className="flex-col flex p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">

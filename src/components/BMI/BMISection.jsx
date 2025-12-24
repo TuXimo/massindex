@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BMICalculator from './BMICalculator';
 import BMITable from './BMITable';
 import BMIImage from './BMIImage';
@@ -11,7 +11,7 @@ export default function BMISection() {
   const [weight, setWeight] = useState(70); 
   const [height, setHeight] = useState(175);
   const [bmi, setBmi] = useState(null);
-  const [activeTab, setActiveTab] = useState('calculator'); // 'calculator' or 'visual'
+  const [activeTab, setActiveTab] = useState('visual'); // 'calculator' or 'visual' - default to visual
   const [unit, setUnit] = useState('metric'); // 'metric' or 'imperial'
 
   const [language, setLanguage] = useState('es'); // 'en' or 'es'
@@ -48,8 +48,21 @@ export default function BMISection() {
     setHeight(h);
   };
 
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    // Determine if we should smooth scroll or instant scroll
+    // For initial load, it might be better to just jump or wait a tick
+    const timer = setTimeout(() => {
+        if (sectionRef.current) {
+            sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, 100); // Small delay to ensure render
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <section className="w-full max-w-[95rem] min-h-[800px] flex flex-col">
+    <section id="bmi-main-view" ref={sectionRef} className="w-full max-w-[95rem] min-h-[800px] flex flex-col">
       <div className="flex flex-col lg:flex-row gap-8 items-stretch flex-1 min-h-0">
         {/* Left Column (Inputs & Visual) */}
         <div className="flex flex-col w-full lg:w-[450px] flex-none gap-6">

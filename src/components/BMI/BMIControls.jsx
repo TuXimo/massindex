@@ -20,8 +20,8 @@ export default function BMIControls({
   const getActiveClass = (isActive) => 
       `relative z-10 py-2 text-[10px] font-bold uppercase tracking-widest rounded-full transition-colors duration-300 flex items-center justify-center gap-2 ${isActive ? 'text-white' : 'text-slate-400 hover:text-white'}`;
 
-  // Container Class
-  const containerClass = "bg-slate-900/40 p-1 rounded-full grid relative border border-slate-700/50 backdrop-blur-md";
+  // Container Class - removed padding
+  const containerClass = "bg-slate-900/40 rounded-full grid relative border border-slate-700/50 backdrop-blur-md overflow-hidden";
 
   return (
     <div className="p-6 bg-slate-900/20 backdrop-blur-md border border-slate-800/50 rounded-2xl flex flex-col justify-center gap-6 h-full relative overflow-hidden">
@@ -33,7 +33,7 @@ export default function BMIControls({
          <div className="z-10 relative">
              <div className={`${containerClass} grid-cols-2`}>
                 <div 
-                    className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-out left-1 ${activeTab === 'visual' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'}`}
+                    className={`absolute inset-y-0 w-[calc(50%+1px)] transition-all duration-300 ease-out ${activeTab === 'visual' ? 'left-[calc(50%-1px)]' : 'left-0'}`}
                     style={glowStyle}
                 ></div>
                 <button 
@@ -41,7 +41,7 @@ export default function BMIControls({
                    className={getActiveClass(activeTab === 'calculator')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5m-7.5 3h7.5M3 12h18M3 9h18M3 6h18M3 3h18" /> 
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.008v.008h-.008V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5m-7.5 3h7.5M3 12h18M3 9h18M3 6h18M3 3h18" /> 
                   </svg>
                   <span>Calc</span>
                 </button>
@@ -61,7 +61,7 @@ export default function BMIControls({
          {/* Unit Toggle */}
          <div className="z-10 relative">
              <div className={`${containerClass} grid-cols-2`}>
-                <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-out left-1 ${unit === 'imperial' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'}`}
+                <div className={`absolute inset-y-0 w-[calc(50%+1px)] transition-all duration-300 ease-out ${unit === 'imperial' ? 'left-[calc(50%-1px)]' : 'left-0'}`}
                      style={glowStyle}
                 ></div>
                 <button 

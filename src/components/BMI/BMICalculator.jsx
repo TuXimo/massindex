@@ -148,18 +148,14 @@ export default function BMICalculator({ weight, height, setWeight, setHeight, un
                 required
               />
           ) : (
-              // Simple text input fallback or re-implement ImperialHeightInput here if needed.
-              // For now using simple input to match original before my edits if helper is missing.
-              // Wait, I stripped the helper in BMIImage but BMICalculator had it defined locally or imported?
-              // In the original file it was defined locally. I'll re-add it or use a simple input for now and fix later if requested.
-              // Actually, I'll insert a simple input that calls setHeight directly for now to ensure valid JS.
-              <input
-                 type="text"
-                 value={height} 
-                 onChange={(e) => setHeight(e.target.value)}
-                 className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-white font-bold placeholder-slate-600 transition-all"
-                 placeholder="68" // inches
-              />
+              <div className='[&>input]:w-full [&>input]:p-3 [&>input]:bg-slate-900 [&>input]:border [&>input]:border-slate-700 [&>input]:rounded-lg [&>input]:focus:outline-none [&>input]:focus:ring-2 [&>input]:focus:ring-blue-500/50 [&>input]:focus:border-blue-500 [&>input]:text-white [&>input]:font-bold [&>input]:placeholder-slate-600 [&>input]:transition-all'>
+                 <ImperialHeightInput 
+                     inches={height} 
+                     onChange={setHeight} 
+                     min={0} 
+                     max={limits.heightMax} 
+                 />
+              </div>
           )}
         </div>
       </div>
