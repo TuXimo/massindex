@@ -160,6 +160,9 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
 
   return (
     <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
+      <h3 className="font-bold text-xl mb-6 text-center text-white uppercase tracking-wider">
+        {t('controls.visual')}
+      </h3>
       
       {/* Top Section: Height Slider + Visualization */}
       <div className="flex-1 flex flex-row gap-4 lg:gap-6 relative min-h-0">

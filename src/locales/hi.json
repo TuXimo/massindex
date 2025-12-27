@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "आपके स्वास्थ्य के लिए डिज़ाइन किया गया।"
+  },
+  "calculator": {
+    "title": "कैलकुलेटर",
+    "weight": "वजन",
+    "height": "ऊंचाई",
+    "formula": "सूत्र",
+    "formulaMetric": "BMI = वजन / ऊंचाई²",
+    "formulaImperial": "BMI = 703 × वजन / ऊंचाई²",
+    "autoUpdate": "* परिणाम स्वचालित रूप से अपडेट होते हैं"
   }
 }

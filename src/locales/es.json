@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "Diseñado para tu salud."
+  },
+  "calculator": {
+    "title": "Calculadora",
+    "weight": "Peso",
+    "height": "Altura",
+    "formula": "Fórmula",
+    "formulaMetric": "IMC = Peso / Altura²",
+    "formulaImperial": "IMC = 703 × Peso / Altura²",
+    "autoUpdate": "* Los resultados se actualizan automáticamente"
   }
 }

@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "あなたの健康のために設計されました。"
+  },
+  "calculator": {
+    "title": "計算機",
+    "weight": "体重",
+    "height": "身長",
+    "formula": "式",
+    "formulaMetric": "BMI = 体重 / 身長²",
+    "formulaImperial": "BMI = 703 × 体重 / 身長²",
+    "autoUpdate": "* 結果は自動的に更新されます"
   }
 }

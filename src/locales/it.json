@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "Progettato per la tua salute."
+  },
+  "calculator": {
+    "title": "Calcolatrice",
+    "weight": "Peso",
+    "height": "Altezza",
+    "formula": "Formula",
+    "formulaMetric": "BMI = Peso / Altezza²",
+    "formulaImperial": "BMI = 703 × Peso / Altezza²",
+    "autoUpdate": "* I risultati si aggiornano automaticamente"
   }
 }

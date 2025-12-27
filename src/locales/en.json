@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "Designed for your health."
+  },
+  "calculator": {
+    "title": "Calculator",
+    "weight": "Weight",
+    "height": "Height",
+    "formula": "Formula",
+    "formulaMetric": "BMI = Weight / Height²",
+    "formulaImperial": "BMI = 703 × Weight / Height²",
+    "autoUpdate": "* Results update automatically"
   }
 }

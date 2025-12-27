@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Helper Component for Imperial Input to handle format state
 const ImperialHeightInput = ({ inches, onChange, min, max }) => {
@@ -71,6 +72,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max }) => {
 };
 
 export default function BMICalculator({ weight, height, setWeight, setHeight, unit = 'metric' }) {
+  const { t } = useTranslation();
   
   // No submit handler needed as we update parent state directly
 
@@ -116,11 +118,11 @@ export default function BMICalculator({ weight, height, setWeight, setHeight, un
   return (
     <div className="p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl flex-1 h-full transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
       <h3 className="font-bold text-xl mb-6 text-center text-white uppercase tracking-wider">
-        Calculadora
+        {t('calculator.title')}
       </h3>
       <div className="space-y-6">
         <div>
-          <label className="block text-xs font-bold uppercase mb-2 text-slate-200">Peso ({unit === 'metric' ? 'kg' : 'lb'})</label>
+          <label className="block text-xs font-bold uppercase mb-2 text-slate-200">{t('calculator.weight')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
           <input
             type="text"
             inputMode="decimal"
@@ -134,7 +136,7 @@ export default function BMICalculator({ weight, height, setWeight, setHeight, un
           />
         </div>
         <div>
-          <label className="block text-xs font-bold uppercase mb-2 text-slate-200">Altura ({unit === 'metric' ? 'cm' : 'in'})</label>
+          <label className="block text-xs font-bold uppercase mb-2 text-slate-200">{t('calculator.height')} ({unit === 'metric' ? 'cm' : 'in'})</label>
           {unit === 'metric' ? (
               <input
                 type="text"
@@ -161,10 +163,10 @@ export default function BMICalculator({ weight, height, setWeight, setHeight, un
       </div>
       
        <div className="mt-8 pt-6 border-t border-dashed border-slate-700">
-           <p className="text-xs font-bold text-slate-500 uppercase text-center mb-3">Fórmula</p>
+           <p className="text-xs font-bold text-slate-500 uppercase text-center mb-3">{t('calculator.formula')}</p>
            <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50 text-center">
              <span className="font-bold text-lg block text-slate-200">
-                {unit === 'metric' ? 'IMC = Peso / Altura²' : 'IMC = 703 × Peso / Altura²'}
+                {unit === 'metric' ? t('calculator.formulaMetric') : t('calculator.formulaImperial')}
              </span>
              <span className="text-xs font-bold text-slate-500 block mt-1">
                 {unit === 'metric' ? '(kg / m²)' : '(lb / in²)'}
@@ -173,7 +175,7 @@ export default function BMICalculator({ weight, height, setWeight, setHeight, un
        </div>
 
         <div className="mt-6 text-xs text-center font-bold text-slate-600 uppercase">
-          * Los resultados se actualizan automáticamente
+          {t('calculator.autoUpdate')}
        </div>
     </div>
   );

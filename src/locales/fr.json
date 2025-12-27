@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "Conçu pour votre santé."
+  },
+  "calculator": {
+    "title": "Calculatrice",
+    "weight": "Poids",
+    "height": "Taille",
+    "formula": "Formule",
+    "formulaMetric": "IMC = Poids / Taille²",
+    "formulaImperial": "IMC = 703 × Poids / Taille²",
+    "autoUpdate": "* Les résultats sont mis à jour automatiquement"
   }
 }

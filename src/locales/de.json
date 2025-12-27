@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "Entwickelt für Ihre Gesundheit."
+  },
+  "calculator": {
+    "title": "Rechner",
+    "weight": "Gewicht",
+    "height": "Größe",
+    "formula": "Formel",
+    "formulaMetric": "BMI = Gewicht / Größe²",
+    "formulaImperial": "BMI = 703 × Gewicht / Größe²",
+    "autoUpdate": "* Ergebnisse werden automatisch aktualisiert"
   }
 }

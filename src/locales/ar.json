@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "صمم لصحتك."
+  },
+  "calculator": {
+    "title": "حاسبة",
+    "weight": "الوزن",
+    "height": "الطول",
+    "formula": "الصيغة",
+    "formulaMetric": "BMI = الوزن / الطول²",
+    "formulaImperial": "BMI = 703 × الوزن / الطول²",
+    "autoUpdate": "* يتم تحديث النتائج تلقائيًا"
   }
 }

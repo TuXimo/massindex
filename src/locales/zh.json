@@ -60,5 +60,14 @@
   },
   "footer": {
     "designedFor": "专为您的健康设计。"
+  },
+  "calculator": {
+    "title": "计算器",
+    "weight": "体重",
+    "height": "身高",
+    "formula": "公式",
+    "formulaMetric": "BMI = 体重 / 身高²",
+    "formulaImperial": "BMI = 703 × 体重 / 身高²",
+    "autoUpdate": "* 结果自动更新"
   }
 }
