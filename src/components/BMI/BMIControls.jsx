@@ -110,7 +110,7 @@ export default function BMIControls({
                    style={unit === 'imperial' ? activeTextStyle : {}}
                 >
                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0I12 21M12 20.25h.008v.008H12v-.008z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0h.008v.008H12v-.008z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 6h13.5" />
                    </svg>
                   <span>{t('controls.imperial')}</span>

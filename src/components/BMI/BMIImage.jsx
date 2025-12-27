@@ -47,11 +47,19 @@ const ImperialHeightInput = ({ inches, onChange, min, max, placeholder }) => {
      }
   };
 
+  /* Explicit change handler for instant formatting */
+  const handleChange = (e) => {
+      let val = e.target.value;
+      // Auto-replace . or , with ' for easier entry (5.4 -> 5'4)
+      val = val.replace(/[.,]/g, "'");
+      setLocalVal(val);
+  };
+
   return (
       <input
         type="text" 
         value={localVal}
-        onChange={(e) => setLocalVal(e.target.value)}
+        onChange={handleChange}
         onBlur={handleBlur}
         onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
         placeholder={placeholder}
@@ -60,7 +68,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max, placeholder }) => {
   );
 };
 
-export default function BMIImage({ weight, height, setWeight, setHeight, unit = 'metric', userConfig = {} }) {
+export default function BMIImage({ weight, height, setWeight, setHeight, unit = 'metric', userConfig = {}, customRanges = {}, effectiveRanges }) {
   const { t } = useTranslation();
   
   // Normalized values for visualization
@@ -98,12 +106,6 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   };
 
   const bmiStyle = getBmiData(metricWeight, unit === 'metric' ? height : parseFloat(height)); 
-  // Note: For imperial, height 'value' in state might be just inches if parsed correctly. 
-  // But wait, in ImperialHeightInput we setHeight with inches (number).
-  // In `BMISection`, we parse float. 
-  // So here, `metricWeight` is already kg. `metricHeight` is cm.
-  // The helper `getBmiData` effectively duplicates logic but we can just use the calculated `metricWeight` and `metricHeight` (converted to meters for metric formula).
-  // Actually easier: use `metricWeight` and `metricHeight`.
   
   const getBmiFromMetric = () => {
      if (!metricWeight || !metricHeight) return { color: '#94A3B8', tailwindColor: 'text-slate-400', sliderAccent: 'accent-slate-400' };
@@ -153,10 +155,19 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
     return parseFloat(str);
   };
 
-  // Calculate dynamic ranges based on mode (adult/child) and age
-  const ranges = useMemo(() => {
-     return getSliderRanges(unit, userConfig.mode, userConfig.age);
-  }, [unit, userConfig.mode, userConfig.age]);
+  // Calculate dynamic ranges - NOW RECEIVED FROM PARENT
+  const ranges = effectiveRanges || useMemo(() => {
+     // Fallback if not passed (though it should be)
+     const defaults = getSliderRanges(unit, userConfig.mode, userConfig.age);
+     return {
+        wMin: customRanges?.wMin !== '' ? parseInt(customRanges.wMin) : defaults.wMin,
+        wMax: customRanges?.wMax !== '' ? parseInt(customRanges.wMax) : defaults.wMax,
+        hMin: customRanges?.hMin !== '' ? parseInt(customRanges.hMin) : defaults.hMin,
+        hMax: customRanges?.hMax !== '' ? parseInt(customRanges.hMax) : defaults.hMax,
+        wStep: defaults.wStep,
+        hStep: defaults.hStep
+     };
+  }, [unit, userConfig.mode, userConfig.age, customRanges]);
 
   return (
     <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
@@ -232,7 +243,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                className="h-full w-full transition-all duration-300 ease-out drop-shadow-2xl z-10"
                style={{ filter: `drop-shadow(0 0 15px ${visualStyle.color}40)` }} 
              >
-              <g transform="translate(100, 430)">
+              <g transform="translate(100, 460)">
                   {/* Shadow */}
                   <ellipse cx="0" cy="20" rx="80" ry="15" fill="#000" opacity="0.2" filter="blur(5px)" />
                   

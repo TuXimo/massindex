@@ -53,6 +53,13 @@
     "metric": "(Metric)",
     "imperial": "(Imperial)",
     "years": "years",
+    "validation": {
+      "maxValue": "Maximum value is {{max}}",
+      "minValue": "Minimum value is {{min}}",
+      "maxRange": "Maximum range limit is {{max}}",
+      "minRange": "Minimum range limit is {{min}}",
+      "autoUpdate": "Automatically updates when changing table limits"
+    },
     "headers": {
       "metric": "HGT \\ WGT",
       "imperial": "HGT \\ WGT"

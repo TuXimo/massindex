@@ -48,11 +48,19 @@
     }
   },
   "table": {
+    "autoUpdate": "Actualiza resultados automáticamente",
     "pediatric": "Tabla Pediátrica",
     "reference": "Tabla de Referencia",
     "metric": "(Métrico)",
     "imperial": "(Imperial)",
     "years": "años",
+    "validation": {
+      "maxValue": "El valor máximo es {{max}}",
+      "minValue": "El valor mínimo es {{min}}",
+      "maxRange": "El límite de rango es {{max}}",
+      "minRange": "El límite mínimo es {{min}}",
+      "autoUpdate": "Se actualiza automáticamente al cambiar los límites"
+    },
     "headers": {
       "metric": "ALT \\ PESO",
       "imperial": "HGT \\ WGT"
