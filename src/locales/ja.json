@@ -57,7 +57,10 @@
       "metric": "身長 \\ 体重",
       "imperial": "HGT \\ WGT"
     },
-    "footer": "* 身長と体重の交差点を見つけてください。"
+    "footer": "* 身長と体重の交差点を見つけてください。",
+    "zoomIn": "拡大",
+    "zoomOut": "縮小",
+    "settings": "設定"
   },
   "footer": {
     "designedFor": "あなたの健康のために設計されました。"

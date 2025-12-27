@@ -57,7 +57,10 @@
       "metric": "TLC \\ PDS",
       "imperial": "HGT \\ WGT"
     },
-    "footer": "* Trouvez l'intersection de votre taille et poids."
+    "footer": "* Trouvez l'intersection de votre taille et poids.",
+    "zoomIn": "Agrandir",
+    "zoomOut": "Réduire",
+    "settings": "Paramètres"
   },
   "footer": {
     "designedFor": "Conçu pour votre santé."

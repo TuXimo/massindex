@@ -172,6 +172,8 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const wMax = effectiveRanges.wMax;
   const hMin = effectiveRanges.hMin;
   const hMax = effectiveRanges.hMax;
+  const wStep = effectiveRanges.wStep; // New
+  const hStep = effectiveRanges.hStep; // New
   
   // Absolutes
   const ABS_LIMITS = unit === 'metric' 
@@ -183,6 +185,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
   // Show temporary error message
   const triggerError = (val, type = 'max') => {
+      // Re-use keys or add generic "Invalid Value"
       const msg = type === 'max' 
         ? t('validation.maxRange', { max: val })
         : t('validation.minRange', { min: val });
@@ -190,45 +193,56 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
       if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
       errorTimerRef.current = setTimeout(() => setErrorMsg(null), 3000);
   };
+  
+  const handleCustomRangeChange = (key, val, maxOverride) => {
+       if (val === '') {
+           setCustomRanges(prev => ({...prev, [key]: ''}));
+           return;
+       }
+       let num = parseFloat(val);
+       if (isNaN(num)) return;
 
-  const handleCustomRangeChange = (key, val, maxLimit) => {
-     if (val === '') {
-         setCustomRanges(prev => ({...prev, [key]: ''}));
-         return;
-     }
+       const limit = maxOverride || (key.startsWith('w') ? ABS_LIMITS.wMax : ABS_LIMITS.hMax);
+       if (limit && num > limit) {
+           triggerError(limit, 'max');
+           num = limit;
+       }
+       
+       if (key.startsWith('h')) {
+           const minH = unit === 'metric' ? 50 : 21; 
+           if (num < minH) {
+               triggerError(minH, 'min');
+               num = minH;
+           }
+       } else if (key.startsWith('w')) {
+           const minW = unit === 'metric' ? 20 : 45;
+           if (num < minW) {
+               triggerError(minW, 'min');
+               num = minW;
+           }
+       }
+       
+       setCustomRanges(prev => ({...prev, [key]: String(num)}));
+  };
 
-     const num = parseInt(val);
-     if (isNaN(num)) return;
-     
-     // Prevent negative values
-     if (num < 0) {
-         return; // Just ignore negative input
-     }
-
-     // Global Minimum Height Rule: 50cm for Metric, 20 inches for Imperial
-     const ABS_MIN_HEIGHT = unit === 'metric' ? 50 : 20;
-     // Global Minimum Weight Rule: 10kg for Metric, 22 lbs for Imperial
-     const ABS_MIN_WEIGHT = unit === 'metric' ? 10 : 22;
-     
-     if ((key === 'hMin' || key === 'hMax') && num < ABS_MIN_HEIGHT) {
-         triggerError(ABS_MIN_HEIGHT, 'min');
-         setCustomRanges(prev => ({...prev, [key]: ABS_MIN_HEIGHT.toString()}));
-         return;
-     }
-
-     if ((key === 'wMin' || key === 'wMax') && num < ABS_MIN_WEIGHT) {
-         triggerError(ABS_MIN_WEIGHT, 'min');
-         setCustomRanges(prev => ({...prev, [key]: ABS_MIN_WEIGHT.toString()}));
-         return;
-     }
-
-     if (maxLimit && num > maxLimit) {
-         triggerError(maxLimit, 'max');
-         setCustomRanges(prev => ({...prev, [key]: maxLimit.toString()}));
-         return;
-     }
-     
-     setCustomRanges(prev => ({...prev, [key]: val.toString()}));
+  // Handle Steps Change
+  const handleStepChange = (key, val, min, max) => {
+      if (val === '') {
+          setCustomRanges(prev => ({...prev, [key]: ''}));
+          return;
+      }
+      let num = parseFloat(val);
+      if (isNaN(num)) return;
+      
+      if (num < min) {
+          triggerError(min, 'min');
+          num = min;
+      }
+      if (num > max) {
+          triggerError(max, 'max');
+          num = max;
+      }
+      setCustomRanges(prev => ({...prev, [key]: num.toString()}));
   };
 
   const currentWeight = userWeight ? parseFloat(userWeight) : null;
@@ -252,12 +266,19 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
   const weights = (() => {
     const w = [];
-    const step = unit === 'metric' ? 5 : 10;
-    // Safety check needed if user enters weird ranges (e.g. min > max)
-    if (wMin <= wMax) {
-        for (let i = wMin; i <= wMax; i += step) w.push(i);
+    const step = wStep || (unit === 'metric' ? 5 : 10);
+    
+    if (wMin <= wMax && step > 0) {
+        // Precision safe loop
+        let current = wMin;
+        while (current <= wMax + 0.0001) { // 0.0001 epsilon
+             // Round to avoid floating point drift
+             const val = Math.round(current * 100) / 100;
+             if (val <= wMax) w.push(val);
+             current += step;
+        }
     }
-    // Only insert EXACT current value if it is within bounds and not already present
+    // Exact match insertion
     if (currentWeight && !w.includes(currentWeight) && currentWeight >= wMin && currentWeight <= wMax) {
       w.push(currentWeight);
       w.sort((a, b) => a - b);
@@ -267,9 +288,15 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
   const heights = (() => {
     const h = [];
-    const step = unit === 'metric' ? 5 : 2;
-    if (hMin <= hMax) {
-        for (let i = hMin; i <= hMax; i += step) h.push(i);
+    const step = hStep || (unit === 'metric' ? 5 : 2);
+    
+    if (hMin <= hMax && step > 0) {
+        let current = hMin;
+        while (current <= hMax + 0.0001) {
+             const val = Math.round(current * 100) / 100;
+             if (val <= hMax) h.push(val);
+             current += step;
+        }
     }
     if (currentHeight && !h.includes(currentHeight) && currentHeight >= hMin && currentHeight <= hMax) {
       h.push(currentHeight);
@@ -277,6 +304,8 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
     }
     return h;
   })();
+
+
 
   const calculateCellBMI = (weight, height) => {
     if (!height || height <= 0) return "-";
@@ -298,25 +327,18 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   // Auto-scroll effect
   useEffect(() => {
     if (highlightWeight && highlightHeight) {
-      // Disable auto-scroll on mobile to avoid "snapping" effect
       if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
 
       const activeCell = document.getElementById('active-bmi-cell');
       if (activeCell && containerRef.current) {
-
          const container = containerRef.current;
          const cellTop = activeCell.offsetTop;
          const cellLeft = activeCell.offsetLeft;
-         const cellBottom = cellTop + activeCell.offsetHeight;
-         const cellRight = cellLeft + activeCell.offsetWidth;
-
+         // Center logic...
          const containerTop = container.scrollTop;
-         const containerLeft = container.scrollLeft;
-         const containerBottom = containerTop + container.clientHeight;
-         const containerRight = containerLeft + container.clientWidth;
-
-         const isVerticallyVisible = cellTop >= containerTop && cellBottom <= containerBottom;
-         const isHorizontallyVisible = cellLeft >= containerLeft && cellRight <= containerRight;
+         
+         const isVerticallyVisible = cellTop >= containerTop && (cellTop + activeCell.offsetHeight) <= (containerTop + container.clientHeight);
+         const isHorizontallyVisible = activeCell.offsetLeft >= container.scrollLeft && (activeCell.offsetLeft + activeCell.offsetWidth) <= (container.scrollLeft + container.clientWidth);
 
          if (!isVerticallyVisible || !isHorizontallyVisible) {
             container.scrollTo({
@@ -327,30 +349,23 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
          }
       }
     }
-  }, [highlightWeight, highlightHeight, zoomLevel]); // Depend on clamped values
+  }, [highlightWeight, highlightHeight, zoomLevel]);
 
-  // Helper for Imperial Parsing (Duplicated from BMICalculator for now to keep self-contained)
+  // Helper for Imperial Parsing
   const parseImperialHeight = (val) => {
      if (!val) return null;
      const ftInMatch = val.match(/(\d+)'\s*(\d+)/);
      const decimalMatch = val.match(/^(\d+)[\.,](\d+)$/);
-     
      if (ftInMatch) {
         return parseInt(ftInMatch[1]) * 12 + parseInt(ftInMatch[2]);
      } else if (decimalMatch) {
-        const feet = parseInt(decimalMatch[1]);
-        const inches = parseInt(decimalMatch[2]);
-        if (feet < 9) {
-            return feet * 12 + inches;
-        } else {
-            return parseFloat(val.replace(',', '.'));
-        }
+         const feet = parseInt(decimalMatch[1]);
+         const inches = parseInt(decimalMatch[2]);
+         if (feet < 9) return feet * 12 + inches;
+         return parseFloat(val.replace(',', '.'));
      } else {
         const num = parseFloat(val.replace(',', '.'));
-        if (!isNaN(num)) {
-             if (num < 10) return num * 12;
-             return num;
-        }
+        if (!isNaN(num)) return num < 10 ? num * 12 : num;
      }
      return null;
   };
@@ -358,39 +373,45 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const formatImperialHeight = (val) => {
       if (!val) return '';
       const num = parseFloat(val);
-      if (isNaN(num)) return val; // Return as-is if not a cleaner number (e.g. already formatted? though we store nums)
-      
+      if (isNaN(num)) return val;
       const feet = Math.floor(num / 12);
       const inches = Math.round(num % 12);
       if (inches === 12) return `${feet + 1}'0"`;
       return `${feet}'${inches}"`;
   };
 
-  const handleImperialBlur = (key, val, maxLimit) => {
+  const handleImperialBlur = (key, val, maxLimit, isStep = false) => {
       let parsed = parseImperialHeight(val);
       if (parsed !== null) {
           if (maxLimit && parsed > maxLimit) parsed = maxLimit;
-          // Trigger change with parsed value (inches)
-          handleCustomRangeChange(key, parsed);
+          
+          if (isStep) {
+             // For steps, enforce min 1 inch (approx 3cm but technically 1 inch in imperial logic)
+             // handleStepChange takes (key, valString, min, max)
+             // We use 1 as min, and maxLimit (or 12) as max.
+             handleStepChange(key, parsed.toString(), 1, maxLimit || 12);
+          } else {
+             handleCustomRangeChange(key, parsed);
+          }
       }
-      // If null/invalid, do nothing or reset? Currently existing logic handles empty string.
   };
 
-  const [inputValues, setInputValues] = useState({ hMin: '', hMax: '' });
-
-  // Sync local inputs with customRanges when opening or when ranges change
+  const [inputValues, setInputValues] = useState({ hMin: '', hMax: '', hStep: '' });
   useEffect(() => {
      if (isRangeMenuOpen) {
          if (unit === 'imperial') {
              setInputValues({
-                 hMin: customRanges.hMin ? formatImperialHeight(customRanges.hMin) : formatImperialHeight(ranges.hMin),
-                 hMax: customRanges.hMax ? formatImperialHeight(customRanges.hMax) : formatImperialHeight(ranges.hMax)
+                 hMin: customRanges.hMin ? formatImperialHeight(customRanges.hMin) : '',
+                 hMax: customRanges.hMax ? formatImperialHeight(customRanges.hMax) : '',
+                 hStep: customRanges.hStep ? formatImperialHeight(customRanges.hStep) : ''
              });
          } else {
-             setInputValues({ hMin: '', hMax: '' }); // clear for metric or unused
+             setInputValues({ hMin: '', hMax: '', hStep: '' }); 
          }
      }
   }, [isRangeMenuOpen, customRanges, ranges, unit]);
+
+
 
   return (
       <div className="w-full max-w-full overflow-hidden p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl relative group transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
@@ -412,110 +433,163 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                 </div>
             )}
         </div>
-        <div className="flex gap-2 self-end lg:self-auto relative group-range" ref={rangeMenuRef}>
-             {/* Custom Range Button */}
-             <button
-                onClick={() => setIsRangeMenuOpen(!isRangeMenuOpen)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
-                title="Ajustar Rangos"
-             >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-             </button>
 
-             {/* Popover */}
-             {isRangeMenuOpen && (
-                 <div className="absolute right-full mr-2 top-0 bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl z-50 w-64">
-                    {/* Error Toast inside Popover */}
-                    {errorMsg && (
-                        <div className="absolute bottom-full mb-2 left-0 w-full bg-red-500/90 text-white px-2 py-1 rounded text-xs font-bold text-center z-50 animate-bounce">
-                           {errorMsg}
-                        </div>
-                    )}
-                    <div className="grid grid-cols-2 gap-3 mb-2">
-                         <div className="flex flex-col gap-1">
-                             <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} Min ({unit === 'metric' ? 'kg' : 'lb'})</label>
-                             <DelayedInput 
-                                 className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 outline-none"
-                                 placeholder={ranges.wMin}
-                                 value={customRanges.wMin}
-                                 onCommit={(val) => handleCustomRangeChange('wMin', val)}
-                             />
-                         </div>
-                         <div className="flex flex-col gap-1">
-                             <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} Max ({unit === 'metric' ? 'kg' : 'lb'})</label>
-                             <DelayedInput 
-                                 className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 outline-none"
-                                 placeholder={ranges.wMax}
-                                 value={customRanges.wMax}
-                                 max={ABS_LIMITS.wMax}
-                                 onCommit={(val) => handleCustomRangeChange('wMax', val, ABS_LIMITS.wMax)}
-                             />
-                         </div>
-                         <div className="flex flex-col gap-1">
-                             <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} Min ({unit === 'metric' ? 'cm' : 'in'})</label>
-                             {unit === 'metric' ? (
-                                 <DelayedInput 
-                                     className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 outline-none"
-                                     placeholder={ranges.hMin}
-                                     value={customRanges.hMin}
-                                     onCommit={(val) => handleCustomRangeChange('hMin', val)}
-                                 />
-                             ) : (
-                                 <input 
-                                     type="text"
-                                     className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 outline-none"
-                                     placeholder={formatImperialHeight(ranges.hMin)}
-                                     value={inputValues.hMin}
-                                     onChange={(e) => setInputValues({...inputValues, hMin: e.target.value.replace(/[.,]/g, "'")})}
-                                     onBlur={(e) => handleImperialBlur('hMin', e.target.value)}
-                                     onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                                 />
+
+        {/* Zoom Controls (Outside of range groups) */}
+        <div className="flex rounded-lg p-1 self-end lg:self-auto ml-2 gap-1 relative z-50">
+             {/* Unified Settings Button - Hidden for Children */}
+             {userConfig?.mode !== 'child' && (
+                  <div className="relative group-range" ref={rangeMenuRef}>
+                     <button
+                         onClick={() => setIsRangeMenuOpen(!isRangeMenuOpen)}
+                         className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-all bg-transparent border-none outline-none"
+                         title={t('table.settings')}
+                     >
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0h-3.75M3 16.5h3.75m9.75 0h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0h-3.75m-9.75 0H15m4.125 0a1.5 1.5 0 01-3 0" />
+                         </svg>
+                     </button>
+                     {isRangeMenuOpen && (
+                         <div className="absolute right-0 top-full mt-2 bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl z-50 w-64">
+                             {/* Error Toast inside Popover */}
+                             {errorMsg && (
+                                 <div className="absolute bottom-full mb-2 left-0 w-full bg-red-500/90 text-white px-2 py-1 rounded text-xs font-bold text-center z-50 animate-bounce">
+                                    {errorMsg}
+                                 </div>
                              )}
+                             
+                             {/* Ranges Section */}
+                             <h4 className="text-xs font-bold text-slate-300 uppercase mb-3 border-b border-slate-700 pb-1">Rangos</h4>
+                             <div className="grid grid-cols-2 gap-3 mb-2">
+                                  <div className="flex flex-col gap-1">
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} Min ({unit === 'metric' ? 'kg' : 'lb'})</label>
+                                      <DelayedInput 
+                                          className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                          placeholder={ranges.wMin}
+                                          value={customRanges.wMin}
+                                          onCommit={(val) => handleCustomRangeChange('wMin', val)}
+                                      />
+                                  </div>
+                                  <div className="flex flex-col gap-1">
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} Max ({unit === 'metric' ? 'kg' : 'lb'})</label>
+                                      <DelayedInput 
+                                          className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                          placeholder={ranges.wMax}
+                                          value={customRanges.wMax}
+                                          max={ABS_LIMITS.wMax}
+                                          onCommit={(val) => handleCustomRangeChange('wMax', val, ABS_LIMITS.wMax)}
+                                      />
+                                  </div>
+                                  <div className="flex flex-col gap-1">
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} Min ({unit === 'metric' ? 'cm' : 'in'})</label>
+                                      {unit === 'metric' ? (
+                                          <DelayedInput 
+                                              className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                              placeholder={ranges.hMin}
+                                              value={customRanges.hMin}
+                                              onCommit={(val) => handleCustomRangeChange('hMin', val)}
+                                          />
+                                      ) : (
+                                          <input 
+                                              type="text"
+                                              className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                              placeholder={formatImperialHeight(ranges.hMin)}
+                                              value={inputValues.hMin}
+                                              onChange={(e) => setInputValues({...inputValues, hMin: e.target.value.replace(/[.,]/g, "'")})}
+                                              onBlur={(e) => handleImperialBlur('hMin', e.target.value)}
+                                              onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+                                          />
+                                      )}
+                                  </div>
+                                   <div className="flex flex-col gap-1">
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} Max ({unit === 'metric' ? 'cm' : 'in'})</label>
+                                      {unit === 'metric' ? (
+                                          <DelayedInput 
+                                              className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                              placeholder={ranges.hMax}
+                                              value={customRanges.hMax}
+                                              max={ABS_LIMITS.hMax}
+                                              onCommit={(val) => handleCustomRangeChange('hMax', val, ABS_LIMITS.hMax)}
+                                          />
+                                      ) : (
+                                          <input 
+                                              type="text"
+                                              className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                              placeholder={formatImperialHeight(ranges.hMax)}
+                                              value={inputValues.hMax}
+                                              onChange={(e) => setInputValues({...inputValues, hMax: e.target.value.replace(/[.,]/g, "'")})}
+                                              onBlur={(e) => handleImperialBlur('hMax', e.target.value, ABS_LIMITS.hMax)}
+                                              onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+                                          />
+                                      )}
+                                  </div>
+                             </div>
+
+                             {/* Intervals Section */}
+                             <div className="border-t border-slate-700 my-4 pt-3">
+                                 <h4 className="text-xs font-bold text-slate-300 uppercase mb-3 border-b border-slate-700 pb-1">Intervalos</h4>
+                                 <div className="grid grid-cols-2 gap-3 mb-1">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
+                                        <DelayedInput 
+                                            className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                            placeholder={effectiveRanges.wStep}
+                                            value={customRanges.wStep}
+                                            onCommit={(val) => handleStepChange('wStep', val, 0.5, 10)}
+                                        />
+                                        <span className="text-[9px] text-slate-500">Min 0.5 - Max 10</span>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} ({unit === 'metric' ? 'cm' : 'in'})</label>
+                                        {unit === 'metric' ? (
+                                            <DelayedInput 
+                                                className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                                placeholder={effectiveRanges.hStep}
+                                                value={customRanges.hStep}
+                                                onCommit={(val) => handleStepChange('hStep', val, 0.5, 10)}
+                                             />
+                                        ) : (
+                                            <input 
+                                                type="text"
+                                                className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
+                                                placeholder={formatImperialHeight(effectiveRanges.hStep)}
+                                                value={inputValues.hStep || customRanges.hStep}
+                                                onChange={(e) => {
+                                                     const val = e.target.value.replace(/[.,]/g, "'");
+                                                     // Simplified for steps: allow direct typing or formatted
+                                                     setInputValues(prev => ({...prev, hStep: val}));
+                                                }}
+                                                onBlur={(e) => handleImperialBlur('hStep', e.target.value, 5, true)}
+                                                onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+                                            />
+                                        )}
+                                        <span className="text-[9px] text-slate-500">{unit === 'metric' ? 'Min 0.5 - Max 10' : "Min 0'1\" - Max 0'5\""}</span>
+                                    </div>
+                                 </div>
+                             </div>
                          </div>
-                          <div className="flex flex-col gap-1">
-                             <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} Max ({unit === 'metric' ? 'cm' : 'in'})</label>
-                             {unit === 'metric' ? (
-                                 <DelayedInput 
-                                     className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 outline-none"
-                                     placeholder={ranges.hMax}
-                                     value={customRanges.hMax}
-                                     max={ABS_LIMITS.hMax}
-                                     onCommit={(val) => handleCustomRangeChange('hMax', val, ABS_LIMITS.hMax)}
-                                 />
-                             ) : (
-                                 <input 
-                                     type="text"
-                                     className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 outline-none"
-                                     placeholder={formatImperialHeight(ranges.hMax)}
-                                     value={inputValues.hMax}
-                                     onChange={(e) => setInputValues({...inputValues, hMax: e.target.value.replace(/[.,]/g, "'")})}
-                                     onBlur={(e) => handleImperialBlur('hMax', e.target.value, ABS_LIMITS.hMax)}
-                                     onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                                 />
-                             )}
-                         </div>
-                     </div>
+                     )}
                  </div>
              )}
 
              <button 
-              onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
-              title="Reducir"
-            >
-              -
-            </button>
-            <button 
-              onClick={() => setZoomLevel(prev => Math.min(1.5, prev + 0.1))}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
-              title="Aumentar"
-            >
-              +
-            </button>
+               onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}
+               className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
+               title={t('table.zoomOut')}
+             >
+               -
+             </button>
+             <button 
+               onClick={() => setZoomLevel(prev => Math.min(1.5, prev + 0.1))}
+               className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
+               title={t('table.zoomIn')}
+             >
+               +
+             </button>
         </div>
+
+
+
       </div>
       
       <div 

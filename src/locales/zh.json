@@ -57,7 +57,10 @@
       "metric": "身高 \\ 体重",
       "imperial": "身高 \\ 体重"
     },
-    "footer": "* 找到您的身高和体重的交叉点。"
+    "footer": "* 找到您的身高和体重的交叉点。",
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "settings": "设置"
   },
   "footer": {
     "designedFor": "专为您的健康设计。"

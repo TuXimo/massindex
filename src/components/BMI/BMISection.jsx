@@ -68,19 +68,34 @@ export default function BMISection() {
   const [bmi, setBmi] = useState(null);
 
   // Custom Ranges State (Hoisted from BMITable)
-  const [customRanges, setCustomRanges] = useState({ wMin: '', wMax: '', hMin: '', hMax: '' });
+  // Added wStep/hStep for custom intervals
+  const [customRanges, setCustomRanges] = useState({ wMin: '', wMax: '', hMin: '', hMax: '', wStep: '', hStep: '' });
 
-  // Hoisted Effective Ranges Calculation
-  // We compute this here so all children (Calculator, Table, Image) share the exact same limits
+  /* 
+   * Hoisted Effective Ranges Calculation 
+   * Enforce defaults for Child mode as requested by user.
+   */
   const effectiveRanges = useMemo(() => {
      const defaults = getSliderRanges(unit, userConfig?.mode, userConfig?.age);
+     
+     // Pediatric Mode: strict defaults, NO custom ranges
+     if (userConfig?.mode === 'child') {
+         return defaults;
+     }
+
+     const getVal = (custom, def) => {
+         if (custom === '') return def;
+         const parsed = parseFloat(custom); // Changed to parseFloat to support 0.5 steps
+         return isNaN(parsed) ? def : parsed;
+     };
+
      return {
-         wMin: customRanges.wMin !== '' ? parseInt(customRanges.wMin) : defaults.wMin,
-         wMax: customRanges.wMax !== '' ? parseInt(customRanges.wMax) : defaults.wMax,
-         hMin: customRanges.hMin !== '' ? parseInt(customRanges.hMin) : defaults.hMin,
-         hMax: customRanges.hMax !== '' ? parseInt(customRanges.hMax) : defaults.hMax,
-         wStep: defaults.wStep,
-         hStep: defaults.hStep
+         wMin: getVal(customRanges.wMin, defaults.wMin),
+         wMax: getVal(customRanges.wMax, defaults.wMax),
+         hMin: getVal(customRanges.hMin, defaults.hMin),
+         hMax: getVal(customRanges.hMax, defaults.hMax),
+         wStep: getVal(customRanges.wStep, defaults.wStep),
+         hStep: getVal(customRanges.hStep, defaults.hStep)
      };
   }, [unit, userConfig?.mode, userConfig?.age, customRanges]);
 
@@ -110,7 +125,9 @@ export default function BMISection() {
           wMin: prev.wMin ? Math.round(parseInt(prev.wMin) * 2.20462).toString() : '',
           wMax: prev.wMax ? Math.round(parseInt(prev.wMax) * 2.20462).toString() : '',
           hMin: prev.hMin ? Math.round(parseInt(prev.hMin) / 2.54).toString() : '',
-          hMax: prev.hMax ? Math.round(parseInt(prev.hMax) / 2.54).toString() : ''
+          hMax: prev.hMax ? Math.round(parseInt(prev.hMax) / 2.54).toString() : '',
+          wStep: '', // Reset steps to default on unit change
+          hStep: '' 
       }));
 
     } else {
@@ -166,7 +183,9 @@ export default function BMISection() {
           wMin: prev.wMin ? Math.round(parseInt(prev.wMin) / 2.20462).toString() : '',
           wMax: prev.wMax ? Math.round(parseInt(prev.wMax) / 2.20462).toString() : '',
           hMin: prev.hMin ? Math.round(parseInt(prev.hMin) * 2.54).toString() : '',
-          hMax: prev.hMax ? Math.round(parseInt(prev.hMax) * 2.54).toString() : ''
+          hMax: prev.hMax ? Math.round(parseInt(prev.hMax) * 2.54).toString() : '',
+          wStep: '', // Reset steps to default
+          hStep: ''
       }));
     }
     setUnit(newUnit);

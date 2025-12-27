@@ -57,7 +57,10 @@
       "metric": "GRÖ \\ GEW",
       "imperial": "HGT \\ WGT"
     },
-    "footer": "* Finden Sie den Schnittpunkt Ihrer Größe und Ihres Gewichts."
+    "footer": "* Finden Sie den Schnittpunkt Ihrer Größe und Ihres Gewichts.",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "settings": "Einstellungen"
   },
   "footer": {
     "designedFor": "Entwickelt für Ihre Gesundheit."

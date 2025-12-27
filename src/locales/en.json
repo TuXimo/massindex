@@ -64,7 +64,10 @@
       "metric": "HGT \\ WGT",
       "imperial": "HGT \\ WGT"
     },
-    "footer": "* Find the intersection of your height and weight."
+    "footer": "* Find the intersection of your height and weight.",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "settings": "Settings"
   },
   "footer": {
     "designedFor": "Designed for your health."

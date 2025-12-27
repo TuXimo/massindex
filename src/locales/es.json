@@ -65,7 +65,10 @@
       "metric": "ALT \\ PESO",
       "imperial": "HGT \\ WGT"
     },
-    "footer": "* Encuentra la intersección de tu altura y peso."
+    "footer": "* Encuentra la intersección de tu altura y peso.",
+    "zoomIn": "Aumentar",
+    "zoomOut": "Reducir",
+    "settings": "Ajustes"
   },
   "footer": {
     "designedFor": "Diseñado para tu salud."
