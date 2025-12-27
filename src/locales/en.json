@@ -67,7 +67,12 @@
     "footer": "* Find the intersection of your height and weight.",
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
-    "settings": "Settings"
+    "settings": "Settings",
+    "ranges": "Ranges",
+    "intervals": "Intervals",
+    "min": "Min",
+    "max": "Max",
+    "limits": "Min {{min}} - Max {{max}}"
   },
   "footer": {
     "designedFor": "Designed for your health."

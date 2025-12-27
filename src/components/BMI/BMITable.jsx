@@ -445,7 +445,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                          className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-all bg-transparent border-none outline-none"
                          title={t('table.settings')}
                      >
-                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="w-5 h-5">
                              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0h-3.75M3 16.5h3.75m9.75 0h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0h-3.75m-9.75 0H15m4.125 0a1.5 1.5 0 01-3 0" />
                          </svg>
                      </button>
@@ -459,10 +459,10 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                              )}
                              
                              {/* Ranges Section */}
-                             <h4 className="text-xs font-bold text-slate-300 uppercase mb-3 border-b border-slate-700 pb-1">Rangos</h4>
+                             <h4 className="text-xs font-bold text-slate-300 uppercase mb-3 border-b border-slate-700 pb-1">{t('table.ranges')}</h4>
                              <div className="grid grid-cols-2 gap-3 mb-2">
                                   <div className="flex flex-col gap-1">
-                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} Min ({unit === 'metric' ? 'kg' : 'lb'})</label>
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} {t('table.min')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
                                       <DelayedInput 
                                           className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
                                           placeholder={ranges.wMin}
@@ -471,7 +471,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                       />
                                   </div>
                                   <div className="flex flex-col gap-1">
-                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} Max ({unit === 'metric' ? 'kg' : 'lb'})</label>
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} {t('table.max')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
                                       <DelayedInput 
                                           className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
                                           placeholder={ranges.wMax}
@@ -481,7 +481,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                       />
                                   </div>
                                   <div className="flex flex-col gap-1">
-                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} Min ({unit === 'metric' ? 'cm' : 'in'})</label>
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} {t('table.min')} ({unit === 'metric' ? 'cm' : 'in'})</label>
                                       {unit === 'metric' ? (
                                           <DelayedInput 
                                               className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
@@ -492,6 +492,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                       ) : (
                                           <input 
                                               type="text"
+                                              inputMode="decimal"
                                               className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
                                               placeholder={formatImperialHeight(ranges.hMin)}
                                               value={inputValues.hMin}
@@ -502,7 +503,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                       )}
                                   </div>
                                    <div className="flex flex-col gap-1">
-                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} Max ({unit === 'metric' ? 'cm' : 'in'})</label>
+                                      <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} {t('table.max')} ({unit === 'metric' ? 'cm' : 'in'})</label>
                                       {unit === 'metric' ? (
                                           <DelayedInput 
                                               className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
@@ -514,6 +515,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                       ) : (
                                           <input 
                                               type="text"
+                                              inputMode="decimal"
                                               className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
                                               placeholder={formatImperialHeight(ranges.hMax)}
                                               value={inputValues.hMax}
@@ -527,7 +529,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
                              {/* Intervals Section */}
                              <div className="border-t border-slate-700 my-4 pt-3">
-                                 <h4 className="text-xs font-bold text-slate-300 uppercase mb-3 border-b border-slate-700 pb-1">Intervalos</h4>
+                                 <h4 className="text-xs font-bold text-slate-300 uppercase mb-3 border-b border-slate-700 pb-1">{t('table.intervals')}</h4>
                                  <div className="grid grid-cols-2 gap-3 mb-1">
                                     <div className="flex flex-col gap-1">
                                         <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.weight')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
@@ -537,7 +539,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                             value={customRanges.wStep}
                                             onCommit={(val) => handleStepChange('wStep', val, 0.5, 10)}
                                         />
-                                        <span className="text-[9px] text-slate-500">Min 0.5 - Max 10</span>
+                                        <span className="text-[9px] text-slate-500">{t('table.limits', { min: 0.5, max: 10 })}</span>
                                     </div>
                                     <div className="flex flex-col gap-1">
                                         <label className="text-[10px] text-slate-400 font-bold uppercase">{t('common.height')} ({unit === 'metric' ? 'cm' : 'in'})</label>
@@ -551,6 +553,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                         ) : (
                                             <input 
                                                 type="text"
+                                                inputMode="decimal"
                                                 className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs text-white placeholder:text-slate-500 focus:border-blue-500 outline-none"
                                                 placeholder={formatImperialHeight(effectiveRanges.hStep)}
                                                 value={inputValues.hStep || customRanges.hStep}
@@ -563,7 +566,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                                                 onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
                                             />
                                         )}
-                                        <span className="text-[9px] text-slate-500">{unit === 'metric' ? 'Min 0.5 - Max 10' : "Min 0'1\" - Max 0'5\""}</span>
+                                        <span className="text-[9px] text-slate-500">{unit === 'metric' ? t('table.limits', { min: 0.5, max: 10 }) : t('table.limits', { min: "0'1\"", max: "0'5\"" })}</span>
                                     </div>
                                  </div>
                              </div>

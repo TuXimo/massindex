@@ -68,7 +68,12 @@
     "footer": "* Encuentra la intersección de tu altura y peso.",
     "zoomIn": "Aumentar",
     "zoomOut": "Reducir",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "ranges": "Rangos",
+    "intervals": "Intervalos",
+    "min": "Min",
+    "max": "Máx",
+    "limits": "Min {{min}} - Máx {{max}}"
   },
   "footer": {
     "designedFor": "Diseñado para tu salud."

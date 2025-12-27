@@ -67,6 +67,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max, onError }) => {
   return (
       <input
         type="text" 
+        inputMode="decimal"
         value={localVal}
         onChange={(e) => setLocalVal(e.target.value.replace(/[.,]/g, "'"))}
         onBlur={handleBlur}

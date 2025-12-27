@@ -60,7 +60,12 @@
     "footer": "* 找到您的身高和体重的交叉点。",
     "zoomIn": "放大",
     "zoomOut": "缩小",
-    "settings": "设置"
+    "settings": "设置",
+    "ranges": "范围",
+    "intervals": "间隔",
+    "min": "最小",
+    "max": "最大",
+    "limits": "最小 {{min}} - 最大 {{max}}"
   },
   "footer": {
     "designedFor": "专为您的健康设计。"
