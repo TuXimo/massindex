@@ -50,6 +50,7 @@
   "table": {
     "pediatric": "小児用チャート",
     "reference": "参照チャート",
+    "metric": "(メートル法)",
     "imperial": "(ヤード・ポンド法)",
     "years": "歳",
     "headers": {

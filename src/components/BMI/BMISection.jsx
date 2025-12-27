@@ -9,17 +9,39 @@ import BMIControls from './BMIControls';
 import { getBmiInfo } from '../../utils/bmiUtils';
 
 export default function BMISection() {
-  const [weight, setWeight] = useState(''); 
-  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('bmi_weight') || '';
+    return '';
+  }); 
+  const [height, setHeight] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('bmi_height') || '';
+    return '';
+  });
   const [bmi, setBmi] = useState(null);
   const [activeTab, setActiveTab] = useState(() => {
-    // Default to 'calculator' on mobile (< 1024px), 'visual' on desktop
     if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('active_tab');
+        if (saved) return saved;
         return window.innerWidth < 1024 ? 'calculator' : 'visual';
     }
     return 'visual';
   });
-  const [unit, setUnit] = useState('metric'); // 'metric' or 'imperial'
+  
+  // Persist Active Tab
+  useEffect(() => {
+     localStorage.setItem('active_tab', activeTab);
+  }, [activeTab]);
+  const [unit, setUnit] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('bmi_unit') || 'metric';
+    return 'metric';
+  }); 
+
+  // Persist BMI Data
+  useEffect(() => {
+    localStorage.setItem('bmi_weight', weight);
+    localStorage.setItem('bmi_height', height);
+    localStorage.setItem('bmi_unit', unit);
+  }, [weight, height, unit]);
 
   const { language, setLanguage, userConfig, setThemeColor } = useConfig();
   

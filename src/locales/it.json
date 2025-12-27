@@ -50,6 +50,7 @@
   "table": {
     "pediatric": "Tabella Pediatrica",
     "reference": "Tabella di Riferimento",
+    "metric": "(Metrico)",
     "imperial": "(Imperiale)",
     "years": "anni",
     "headers": {

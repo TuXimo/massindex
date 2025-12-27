@@ -9,10 +9,16 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   // Default Zoom: Higher on mobile (1.2), normal on desktop (1.0)
   const [zoomLevel, setZoomLevel] = useState(() => {
     if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('table_zoom');
+        if (saved) return parseFloat(saved);
         return window.innerWidth < 1024 ? 1.2 : 1;
     }
     return 1;
   });
+
+  useEffect(() => {
+    localStorage.setItem('table_zoom', zoomLevel);
+  }, [zoomLevel]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -99,20 +105,38 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
       return `${feet}'${inches}"`;
   };
 
+  // Range definitions
+  const wMin = ranges?.wMin || (unit === 'metric' ? 40 : 90);
+  const wMax = ranges?.wMax || (unit === 'metric' ? 160 : 350);
+  const hMin = ranges?.hMin || (unit === 'metric' ? 140 : 55);
+  const hMax = ranges?.hMax || (unit === 'metric' ? 220 : 87);
+
   const currentWeight = userWeight ? parseFloat(userWeight) : null;
   const currentHeight = userHeight ? parseFloat(userHeight) : null;
+
+  // Clamping for Highlight
+  // If value is out of bounds, clamp to the nearest edge (min or max)
+  const highlightWeight = useMemo(() => {
+    if (currentWeight === null) return null;
+    if (currentWeight < wMin) return wMin;
+    if (currentWeight > wMax) return wMax;
+    return currentWeight;
+  }, [currentWeight, wMin, wMax]);
+
+  const highlightHeight = useMemo(() => {
+    if (currentHeight === null) return null;
+    if (currentHeight < hMin) return hMin;
+    if (currentHeight > hMax) return hMax;
+    return currentHeight;
+  }, [currentHeight, hMin, hMax]);
 
 
   const weights = (() => {
     const w = [];
-    // Use dynamic ranges with fallback to hardcoded if not present (safety)
-    const min = ranges?.wMin || (unit === 'metric' ? 40 : 90);
-    const max = ranges?.wMax || (unit === 'metric' ? 160 : 350);
     const step = unit === 'metric' ? 5 : 10;
-
-    for (let i = min; i <= max; i += step) w.push(i);
-    
-    if (currentWeight && !w.includes(currentWeight) && currentWeight >= min && currentWeight <= max) {
+    for (let i = wMin; i <= wMax; i += step) w.push(i);
+    // Only insert EXACT current value if it is within bounds and not already present
+    if (currentWeight && !w.includes(currentWeight) && currentWeight >= wMin && currentWeight <= wMax) {
       w.push(currentWeight);
     }
     return w.sort((a, b) => a - b);
@@ -120,13 +144,9 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
   const heights = (() => {
     const h = [];
-    const min = ranges?.hMin || (unit === 'metric' ? 140 : 55);
-    const max = ranges?.hMax || (unit === 'metric' ? 220 : 87);
     const step = unit === 'metric' ? 5 : 2;
-
-    for (let i = min; i <= max; i += step) h.push(i);
-
-    if (currentHeight && !h.includes(currentHeight) && currentHeight >= min && currentHeight <= max) {
+    for (let i = hMin; i <= hMax; i += step) h.push(i);
+    if (currentHeight && !h.includes(currentHeight) && currentHeight >= hMin && currentHeight <= hMax) {
       h.push(currentHeight);
     }
     return h.sort((a, b) => a - b);
@@ -143,13 +163,14 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   };
 
   const isHighlighted = (w, h) => {
-    if (!currentWeight || !currentHeight) return false;
-    return w === currentWeight && h === currentHeight;
+    if (highlightWeight === null || highlightHeight === null) return false;
+    // Compare against the clamped "highlight" values, not the raw input
+    return w === highlightWeight && h === highlightHeight;
   };
 
   // Auto-scroll effect
   useEffect(() => {
-    if (currentWeight && currentHeight) {
+    if (highlightWeight && highlightHeight) {
       // Disable auto-scroll on mobile to avoid "snapping" effect
       if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
 
@@ -179,7 +200,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
          }
       }
     }
-  }, [currentWeight, currentHeight, zoomLevel]); // Depend on converted values
+  }, [highlightWeight, highlightHeight, zoomLevel]); // Depend on clamped values
 
   return (
       <div className="w-full max-w-full overflow-hidden p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl relative group transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
@@ -188,6 +209,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
             <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2 shrink-0">
               {userConfig?.mode === 'child' ? t('table.pediatric') : t('table.reference')} 
               {unit === 'imperial' && <span className="text-slate-500 text-sm">{t('table.imperial')}</span>}
+              {unit === 'metric' && <span className="text-slate-500 text-sm">{t('table.metric')}</span>}
             </h3>
             {userConfig?.mode === 'child' && (
                 <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90 mt-1 sm:mt-0">
@@ -236,7 +258,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                   {unit === 'metric' ? t('table.headers.metric') : t('table.headers.imperial')}
                 </th>
                 {weights.map((w) => {
-                   const isColActive = showHighlight && currentWeight === w;
+                   const isColActive = showHighlight && highlightWeight === w;
                    return (
                     <th 
                       key={w} 
@@ -251,7 +273,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
             </thead>
             <tbody>
               {heights.map((h) => {
-                const isRowActive = showHighlight && currentHeight === h;
+                const isRowActive = showHighlight && highlightHeight === h;
                 return (
                   <tr key={h}>
                     <td 
@@ -262,7 +284,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                     </td>
                     {weights.map((w) => {
                       const bmi = calculateCellBMI(w, h);
-                      const isColActive = showHighlight && currentWeight === w;
+                      const isColActive = showHighlight && highlightWeight === w;
                       const active = isHighlighted(w, h);
                       
                       // Highlight logic: if active -> Glow. If row/col active -> brighter. Else -> standard.

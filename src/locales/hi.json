@@ -50,6 +50,7 @@
   "table": {
     "pediatric": "बाल चिकित्सा तालिका",
     "reference": "संदर्भ तालिका",
+    "metric": "(मीट्रिक)",
     "imperial": "(इंपीरियल)",
     "years": "वर्ष",
     "headers": {

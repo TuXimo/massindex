@@ -50,6 +50,7 @@
   "table": {
     "pediatric": "جدول الأطفال",
     "reference": "جدول مرجعي",
+    "metric": "(متري)",
     "imperial": "(إمبراطوري)",
     "years": "سنة",
     "headers": {
