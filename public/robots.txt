@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://TuXimo.github.io/massindex/sitemap.xml

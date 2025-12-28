@@ -3,6 +3,10 @@
     "title": "Body Mass Index",
     "settings": "Settings"
   },
+  "seo": {
+    "title": "Mass Index",
+    "description": "Calculate your Body Mass Index (BMI) accurately with our easy-to-use tool. Supports metric and imperial units, and provides tailored analysis for adults and children."
+  },
   "common": {
     "height": "Height",
     "weight": "Weight"

@@ -5,6 +5,30 @@ import { useConfig } from '../context/ConfigContext';
 export default function SettingsModal({ isOpen, onClose }) {
   const { t } = useTranslation();
   const { userConfig, updateConfig } = useConfig();
+  
+  // Local state for deferred updates
+  const [tempConfig, setTempConfig] = React.useState(userConfig);
+
+  // Sync tempConfig when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+        setTempConfig(userConfig);
+    }
+  }, [isOpen, userConfig]);
+
+  const handleTempUpdate = (key, value) => {
+      setTempConfig(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = () => {
+      // Commit all changes
+      Object.keys(tempConfig).forEach(key => {
+          if (tempConfig[key] !== userConfig[key]) {
+              updateConfig(key, tempConfig[key]);
+          }
+      });
+      onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -41,27 +65,26 @@ export default function SettingsModal({ isOpen, onClose }) {
                 <label className="block text-xs font-bold uppercase text-slate-400 mb-3">{t('settings.calcMode')}</label>
                 <div className="grid grid-cols-2 gap-2 bg-slate-950/50 p-1 rounded-xl border border-slate-800">
                     <button 
-                        onClick={() => updateConfig('mode', 'adult')}
-                        className={`py-2 px-4 rounded-lg text-xs font-bold uppercase transition-all ${userConfig.mode === 'adult' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'}`}
+                        onClick={() => handleTempUpdate('mode', 'adult')}
+                        className={`py-3 px-2 rounded-lg text-xs font-bold uppercase transition-all flex flex-col justify-center items-center text-center leading-tight h-14 ${tempConfig.mode === 'adult' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white bg-slate-900/50'}`}
                     >
                         {t('settings.adultStandard')}
                     </button>
                     <button 
-                         onClick={() => updateConfig('mode', 'child')}
-                         className={`py-2 px-4 rounded-lg text-xs font-bold uppercase transition-all ${userConfig.mode === 'child' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'}`}
+                         onClick={() => handleTempUpdate('mode', 'child')}
+                         className={`py-3 px-2 rounded-lg text-xs font-bold uppercase transition-all flex flex-col justify-center items-center text-center leading-tight h-14 ${tempConfig.mode === 'child' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white bg-slate-900/50'}`}
                     >
                         {t('settings.childTeen')}
                     </button>
                 </div>
                 <p className="text-[10px] text-slate-500 mt-2 px-1">
-
-                    {userConfig.mode === 'adult' ? t('settings.adultDesc') : t('settings.childDesc')}
+                    {tempConfig.mode === 'adult' ? t('settings.adultDesc') : t('settings.childDesc')}
                 </p>
             </div>
 
             {/* Extra Params (Only if Child Mode) */}
-            <div className={`space-y-4 transition-all duration-300 ${userConfig.mode === 'child' ? 'opacity-100 max-h-96' : 'opacity-50 max-h-0 overflow-hidden grayscale pointer-events-none'}`}>
-                 <div className="grid grid-cols-2 gap-4">
+            <div className={`space-y-4 transition-all duration-300 ${tempConfig.mode === 'child' ? 'opacity-100 max-h-96' : 'opacity-50 max-h-0 overflow-hidden grayscale pointer-events-none'}`}>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-xs font-bold uppercase text-slate-400 mb-2">{t('settings.age')}</label>
                         <input 
@@ -69,45 +92,45 @@ export default function SettingsModal({ isOpen, onClose }) {
                             inputMode="numeric"
                             min="2"
                             max="20"
-                            value={userConfig.age} 
+                            value={tempConfig.age} 
                             onChange={(e) => {
                                 const val = e.target.value;
                                 if (val === '' || /^\d{0,2}$/.test(val)) {
-                                    updateConfig('age', val);
+                                    handleTempUpdate('age', val);
                                 }
                             }}
                             onBlur={() => {
-                                let val = parseInt(userConfig.age);
+                                let val = parseInt(tempConfig.age);
                                 if (isNaN(val) || val < 2) val = 2;
                                 if (val > 20) val = 20;
-                                updateConfig('age', val.toString());
+                                handleTempUpdate('age', val.toString());
                             }}
-                            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white font-bold text-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-slate-700"
+                            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white font-bold text-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-slate-700 h-[54px]"
                             placeholder="10"
                         />
                     </div>
                     <div>
                         <label className="block text-xs font-bold uppercase text-slate-400 mb-2">{t('settings.biologicalSex')}</label>
-                        <div className="flex bg-slate-950 border border-slate-700 rounded-lg p-1 h-[50px]">
+                        <div className="flex bg-slate-950 border border-slate-700 rounded-lg p-1 h-[54px] gap-1">
                             <button 
-                                onClick={() => updateConfig('gender', 'male')}
-                                className={`flex-1 rounded-md flex items-center justify-center transition-all ${userConfig.gender === 'male' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-500 hover:text-slate-300'}`}
+                                onClick={() => handleTempUpdate('gender', 'male')}
+                                className={`flex-1 rounded-md flex items-center justify-center transition-all group ${tempConfig.gender === 'male' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-[0_0_15px_rgba(96,165,250,0.15)]' : 'text-slate-600 hover:text-slate-400 hover:bg-slate-800/50'}`}
+                                title={t('common.male')}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                    <circle cx="9" cy="14" r="5" />
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 transition-transform group-active:scale-95">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12.5 10.5L20 3m0 0h-5m5 0v5" />
+                                    <circle cx="9" cy="14" r="5" />
                                 </svg>
                             </button>
                             <button 
-                                onClick={() => updateConfig('gender', 'female')}
-                                className={`flex-1 rounded-md flex items-center justify-center transition-all ${userConfig.gender === 'female' ? 'bg-pink-600/20 text-pink-400 border border-pink-500/30' : 'text-slate-500 hover:text-slate-300'}`}
+                                onClick={() => handleTempUpdate('gender', 'female')}
+                                className={`flex-1 rounded-md flex items-center justify-center transition-all group ${tempConfig.gender === 'female' ? 'bg-pink-600/20 text-pink-400 border border-pink-500/30 shadow-[0_0_15px_rgba(244,114,182,0.15)]' : 'text-slate-600 hover:text-slate-400 hover:bg-slate-800/50'}`}
+                                title={t('common.female')}
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v13.5m0 0l-4.5-4.5m4.5 4.5l4.5-4.5" opacity="0" /> 
-                                    {/* Venus */}
-                                     <circle cx="12" cy="9" r="4.5" />
-                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.5v6" />
-                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 16.5h5" />
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 transition-transform group-active:scale-95">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.5v6" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 16.5h5" />
+                                    <circle cx="12" cy="9" r="4.5" />
                                 </svg>
                             </button>
                         </div>
@@ -123,14 +146,14 @@ export default function SettingsModal({ isOpen, onClose }) {
         </div>
 
         <div className="mt-8 pt-6 border-t border-slate-800 flex justify-end items-center gap-4">
-            {userConfig.mode === 'child' && (parseInt(userConfig.age) < 2 || parseInt(userConfig.age) > 20 || !userConfig.age) && (
+            {tempConfig.mode === 'child' && (parseInt(tempConfig.age) < 2 || parseInt(tempConfig.age) > 20 || !tempConfig.age) && (
                 <span className="text-xs text-red-400 font-bold animate-pulse">
                     {t('settings.validAge')}
                 </span>
             )}
             <button 
-                onClick={onClose}
-                disabled={userConfig.mode === 'child' && (parseInt(userConfig.age) < 2 || parseInt(userConfig.age) > 20 || !userConfig.age)}
+                onClick={handleSave}
+                disabled={tempConfig.mode === 'child' && (parseInt(tempConfig.age) < 2 || parseInt(tempConfig.age) > 20 || !tempConfig.age)}
                 className="bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-800 text-white px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
             >
                 {t('settings.done')}

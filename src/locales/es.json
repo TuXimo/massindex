@@ -3,6 +3,10 @@
     "title": "Índice de Masa Muscular",
     "settings": "Configuración"
   },
+  "seo": {
+    "title": "Índice de Masa",
+    "description": "Calcula tu Índice de Masa Corporal (IMC) con precisión. Herramienta fácil de usar para adultos y niños, con soporte para unidades métricas e imperiales."
+  },
   "common": {
     "height": "Altura",
     "weight": "Peso"

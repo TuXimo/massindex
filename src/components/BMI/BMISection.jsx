@@ -109,6 +109,12 @@ export default function BMISection() {
   // Store original metric values to prevent precision loss on round-trip (Metric -> Imperial -> Metric)
   const preservedMetricValues = useRef(null);
 
+  // Reset inputs to empty when config changes (Mode or Age) - Dynamic defaults will handle visual slider position
+  useEffect(() => {
+    setWeight('');
+    setHeight('');
+  }, [userConfig?.mode, userConfig?.age]);
+
   // Handle unit change (convert values)
   const handleUnitChange = (newUnit) => {
     if (newUnit === unit) return;

@@ -176,6 +176,16 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   };
 
 
+   // Dynamic Defaults for Visualization (Middle of Range)
+   const defaultHeight = useMemo(() => {
+       const mid = (ranges.hMin + ranges.hMax) / 2;
+       return Math.round(mid / ranges.hStep) * ranges.hStep;
+   }, [ranges]);
+
+   const defaultWeight = useMemo(() => {
+       const mid = (ranges.wMin + ranges.wMax) / 2;
+       return Math.round(mid / ranges.wStep) * ranges.wStep;
+   }, [ranges]);
 
   return (
     <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
@@ -197,7 +207,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 min={ranges.hMin}
                 max={ranges.hMax}
                 step={ranges.hStep}
-                value={height === '' ? (unit === 'metric' ? 175 : 69) : height}
+                value={height === '' ? defaultHeight : height}
                 onChange={(e) => setHeight(e.target.value)}
                 style={{ 
                   transform: 'rotate(-90deg)', 
@@ -214,7 +224,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                     onChange={handleManualInput(setHeight, ranges.hMax)}
                     onBlur={handleBlur(setHeight, ranges.hMin, ranges.hMax, height)}
                     onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                    placeholder="175"
+                    placeholder={defaultHeight.toString()}
                     className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-500"
                   />
               ) : (
@@ -224,7 +234,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                        onChange={setHeight}
                        min={ranges.hMin}
                        max={ranges.hMax}
-                       placeholder="5'9&quot;"
+                       placeholder={formatFeetInches(defaultHeight)}
                     />
                   </div>
               )}
@@ -295,7 +305,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 onChange={handleManualInput(setWeight, ranges.wMax)}
                 onBlur={handleBlur(setWeight, ranges.wMin, ranges.wMax, weight)}
                 onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                placeholder={unit === 'metric' ? "70" : "154"}
+                placeholder={defaultWeight.toString()}
                 className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
              />
              <span className="text-xl font-black text-slate-500">{unit === 'metric' ? 'kg' : 'lb'}</span>
@@ -306,7 +316,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
             min={ranges.wMin}
             max={ranges.wMax}
             step={ranges.wStep}
-            value={weight === '' ? (unit === 'metric' ? 70 : 154) : weight}
+            value={weight === '' ? defaultWeight : weight}
             onChange={(e) => setWeight(e.target.value)}
             className={`w-full ${sliderClasses} touch-pan-y`}
           />
@@ -319,5 +329,3 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
     </div>
   );
 }
-
-

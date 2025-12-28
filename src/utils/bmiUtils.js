@@ -151,12 +151,13 @@ export const getSliderRanges = (unit, mode, age) => {
         wMax = 20 + (cleanAge * 6); // Allow headroom for obesity checking
         
         // Floor/Ceil and Stephens
+        // Req: 5 en 5, empiecen en multiplo de 5
         return {
-            hMin: Math.floor(hMin),
-            hMax: Math.ceil(hMax),
+            hMin: Math.floor(hMin / 5) * 5,
+            hMax: Math.ceil(hMax / 5) * 5,
             hStep: 5,
-            wMin: Math.floor(wMin),
-            wMax: Math.ceil(wMax),
+            wMin: Math.floor(wMin / 5) * 5,
+            wMax: Math.ceil(wMax / 5) * 5,
             wStep: 5
         };
     } else {
@@ -167,13 +168,18 @@ export const getSliderRanges = (unit, mode, age) => {
         wMin = (8 + (cleanAge * 1.5)) * 2.2;
         wMax = (20 + (cleanAge * 6)) * 2.2;
 
+        // Req: Height 0'2" en 0'2" empezando por un numero impar
+        let hMinOdd = Math.floor(hMin);
+        if (hMinOdd % 2 === 0) hMinOdd -= 1; // Make it odd
+
         return {
-            hMin: Math.floor(hMin),
+            hMin: hMinOdd,
             hMax: Math.ceil(hMax),
-            hStep: 2, // inches (matches table step)
-            wMin: Math.floor(wMin),
-            wMax: Math.ceil(wMax),
-            wStep: 10 // lbs (matches table step)
+            hStep: 2, // inches
+            // Req: All ranges 5 en 5 (implies Weight too)
+            wMin: Math.floor(wMin / 5) * 5,
+            wMax: Math.ceil(wMax / 5) * 5,
+            wStep: 5 // lbs
         };
     }
 };

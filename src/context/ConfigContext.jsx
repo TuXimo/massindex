@@ -34,7 +34,18 @@ export function ConfigProvider({ children }) {
   const [userConfig, setUserConfig] = useState(() => {
     if (typeof window !== 'undefined') {
         const saved = localStorage.getItem('user_config');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+             const parsed = JSON.parse(saved);
+             // Requirement: If user was in pediatric mode (child), reset to adult on reload.
+             if (parsed.mode === 'child') {
+                 return {
+                    mode: 'adult', 
+                    age: '',       
+                    gender: 'male', 
+                 };
+             }
+             return parsed;
+        }
     }
     return {
         mode: 'adult', // 'adult' | 'child'
