@@ -1,13 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { getSliderRanges } from '../../utils/bmiUtils';
+import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { getSliderRanges } from "../../utils/bmiUtils";
 
 // Helper Component for Imperial Input to handle format state
 const ImperialHeightInput = ({ inches, onChange, min, max, placeholder }) => {
-  const [localVal, setLocalVal] = useState('');
-  
+  const [localVal, setLocalVal] = useState("");
+
   const format = (val) => {
-    if (!val) return '';
+    if (!val) return "";
     const feet = Math.floor(val / 12);
     const inc = Math.round(val % 12);
     if (inc === 12) return `${feet + 1}'0"`;
@@ -15,129 +15,243 @@ const ImperialHeightInput = ({ inches, onChange, min, max, placeholder }) => {
   };
 
   useEffect(() => {
-     setLocalVal(format(inches));
+    setLocalVal(format(inches));
   }, [inches]);
 
   const handleBlur = () => {
-     let val = localVal;
-     let parsed = null;
-     const ftInMatch = val.match(/(\d+)'\s*(\d+)/);
-     const decimalMatch = val.match(/^(\d+)[\.,](\d+)$/);
-     if (ftInMatch) {
-        parsed = parseInt(ftInMatch[1]) * 12 + parseInt(ftInMatch[2]);
-     } else if (decimalMatch) {
-        const feet = parseInt(decimalMatch[1]);
-        const inches = parseInt(decimalMatch[2]);
-        if (feet < 9) { parsed = feet * 12 + inches; }
-        else { parsed = parseFloat(val.replace(',', '.')); }
-     } else {
-        const num = parseFloat(val.replace(',', '.'));
-        if (!isNaN(num)) {
-           if (num < 10) { parsed = num * 12; }
-           else { parsed = num; }
+    let val = localVal;
+    let parsed = null;
+    const ftInMatch = val.match(/(\d+)'\s*(\d+)/);
+    const decimalMatch = val.match(/^(\d+)[\.,](\d+)$/);
+    if (ftInMatch) {
+      parsed = parseInt(ftInMatch[1]) * 12 + parseInt(ftInMatch[2]);
+    } else if (decimalMatch) {
+      const feet = parseInt(decimalMatch[1]);
+      const inches = parseInt(decimalMatch[2]);
+      if (feet < 9) {
+        parsed = feet * 12 + inches;
+      } else {
+        parsed = parseFloat(val.replace(",", "."));
+      }
+    } else {
+      const num = parseFloat(val.replace(",", "."));
+      if (!isNaN(num)) {
+        if (num < 10) {
+          parsed = num * 12;
+        } else {
+          parsed = num;
         }
-     }
-     if (parsed !== null && !isNaN(parsed)) {
-        if (parsed < min) parsed = min;
-        if (parsed > max) parsed = max;
-        onChange(parsed);
-        setLocalVal(format(parsed)); 
-     } else {
-        setLocalVal(format(inches));
-     }
+      }
+    }
+    if (parsed !== null && !isNaN(parsed)) {
+      if (parsed < min) parsed = min;
+      if (parsed > max) parsed = max;
+      onChange(parsed);
+      setLocalVal(format(parsed));
+    } else {
+      setLocalVal(format(inches));
+    }
   };
 
   /* Explicit change handler for instant formatting */
   const handleChange = (e) => {
-      let val = e.target.value;
-      // Auto-replace . or , with ' for easier entry (5.4 -> 5'4)
-      val = val.replace(/[.,]/g, "'");
-      setLocalVal(val);
+    let val = e.target.value;
+    // Auto-replace . or , with ' for easier entry (5.4 -> 5'4)
+    val = val.replace(/[.,]/g, "'");
+    setLocalVal(val);
   };
 
   return (
-      <input
-        type="text" 
-        value={localVal}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-        placeholder={placeholder}
-        className="w-20 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
-      />
+    <input
+      type="text"
+      value={localVal}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
+      placeholder={placeholder}
+      className="w-20 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
+    />
   );
 };
 
-export default function BMIImage({ weight, height, setWeight, setHeight, unit = 'metric', userConfig = {}, customRanges = {}, effectiveRanges }) {
+export default function BMIImage({
+  weight,
+  height,
+  setWeight,
+  setHeight,
+  unit = "metric",
+  userConfig = {},
+  customRanges = {},
+  effectiveRanges,
+}) {
   const { t } = useTranslation();
-  
+
   // Normalized values for visualization
-  const metricWeight = unit === 'metric' ? parseFloat(weight) : parseFloat(weight) / 2.20462;
-  const metricHeight = unit === 'metric' ? parseFloat(height) : parseFloat(height) * 2.54;
+  const metricWeight =
+    unit === "metric" ? parseFloat(weight) : parseFloat(weight) / 2.20462;
+  const metricHeight =
+    unit === "metric" ? parseFloat(height) : parseFloat(height) * 2.54;
 
   // Calculate dynamic ranges - NOW RECEIVED FROM PARENT
-  const ranges = effectiveRanges || useMemo(() => {
-     // Fallback if not passed (though it should be)
-     const defaults = getSliderRanges(unit, userConfig.mode, userConfig.age);
-     return {
-        wMin: customRanges?.wMin !== '' ? parseInt(customRanges.wMin) : defaults.wMin,
-        wMax: customRanges?.wMax !== '' ? parseInt(customRanges.wMax) : defaults.wMax,
-        hMin: customRanges?.hMin !== '' ? parseInt(customRanges.hMin) : defaults.hMin,
-        hMax: customRanges?.hMax !== '' ? parseInt(customRanges.hMax) : defaults.hMax,
+  const ranges =
+    effectiveRanges ||
+    useMemo(() => {
+      // Fallback if not passed (though it should be)
+      const defaults = getSliderRanges(unit, userConfig.mode, userConfig.age);
+      return {
+        wMin:
+          customRanges?.wMin !== ""
+            ? parseInt(customRanges.wMin)
+            : defaults.wMin,
+        wMax:
+          customRanges?.wMax !== ""
+            ? parseInt(customRanges.wMax)
+            : defaults.wMax,
+        hMin:
+          customRanges?.hMin !== ""
+            ? parseInt(customRanges.hMin)
+            : defaults.hMin,
+        hMax:
+          customRanges?.hMax !== ""
+            ? parseInt(customRanges.hMax)
+            : defaults.hMax,
         wStep: defaults.wStep,
-        hStep: defaults.hStep
-     };
-  }, [unit, userConfig.mode, userConfig.age, customRanges]);
+        hStep: defaults.hStep,
+      };
+    }, [unit, userConfig.mode, userConfig.age, customRanges]);
 
   // Visualization Logic ...
   const baseRatio = 0.4;
-  const currentRatio = (metricWeight && metricHeight) ? (metricWeight / metricHeight) : baseRatio;
-  
+  const currentRatio =
+    metricWeight && metricHeight ? metricWeight / metricHeight : baseRatio;
+
   let widthScale = 1;
   if (metricWeight && metricHeight) {
-     widthScale = 0.5 + (0.65 * (currentRatio / baseRatio)); 
+    widthScale = 0.5 + 0.65 * (currentRatio / baseRatio);
   }
   // Calculate height progress (0 to 1) for scaling alignment
-  const hMin = ranges.hMin || 140;
-  const hMax = ranges.hMax || 220;
-  const hProgress = metricHeight ? Math.max(0, Math.min(1, (metricHeight - hMin) / (hMax - hMin))) : 0.5;
+  const hMin = ranges.hMin || (unit === "metric" ? 140 : 55);
+  const hMax = ranges.hMax || (unit === "metric" ? 220 : 87);
+  // Fix: Use raw 'height' for progress calculation as it matches the unit of hMin/hMax
+  const valHeight = parseFloat(height);
+  const hProgress = !isNaN(valHeight)
+    ? Math.max(0, Math.min(1, (valHeight - hMin) / (hMax - hMin)))
+    : 0.5;
 
   // Map progress to scale range (Approx 0.75 to 1.25 fits well within the viewBox relative to the ruler)
-  const heightScale = 0.75 + (0.5 * hProgress);
+  const heightScale = 0.75 + 0.5 * hProgress;
   // Calculate BMI for dynamic coloring
   const getBmiData = (w, h) => {
-    if (!w || !h) return { color: '#94A3B8', tailwindColor: 'bg-slate-400' }; // Default Slate
+    if (!w || !h) return { color: "#94A3B8", tailwindColor: "bg-slate-400" }; // Default Slate
     let val;
-    if (unit === 'metric') {
-        const hM = h / 100;
-        val = w / (hM * hM);
+    if (unit === "metric") {
+      const hM = h / 100;
+      val = w / (hM * hM);
     } else {
-        val = (703 * w) / (h * h);
+      val = (703 * w) / (h * h);
     }
-    
+
     // Low: <18.5 (Blue), Normal: <25 (Green), Over: <30 (Yellow), Ob1: <35 (Orange), Ob2: <40 (Red), Ob3: >=40 (Dark Red)
     // Using Tailwind palette colors for mapped values
-    if (val < 18.5) return { color: '#60A5FA', tailwindColor: 'text-blue-400', sliderAccent: 'accent-blue-400', shadow: 'shadow-blue-500/50' };
-    if (val < 25) return { color: '#4ADE80', tailwindColor: 'text-green-400', sliderAccent: 'accent-green-400', shadow: 'shadow-green-500/50' };
-    if (val < 30) return { color: '#FACC15', tailwindColor: 'text-yellow-400', sliderAccent: 'accent-yellow-400', shadow: 'shadow-yellow-500/50' };
-    if (val < 35) return { color: '#FB923C', tailwindColor: 'text-orange-400', sliderAccent: 'accent-orange-400', shadow: 'shadow-orange-500/50' };
-    if (val < 40) return { color: '#F87171', tailwindColor: 'text-red-400', sliderAccent: 'accent-red-400', shadow: 'shadow-red-500/50' };
-    return { color: '#EF4444', tailwindColor: 'text-red-500', sliderAccent: 'accent-red-500', shadow: 'shadow-red-900/50' };
+    if (val < 18.5)
+      return {
+        color: "#60A5FA",
+        tailwindColor: "text-blue-400",
+        sliderAccent: "accent-blue-400",
+        shadow: "shadow-blue-500/50",
+      };
+    if (val < 25)
+      return {
+        color: "#4ADE80",
+        tailwindColor: "text-green-400",
+        sliderAccent: "accent-green-400",
+        shadow: "shadow-green-500/50",
+      };
+    if (val < 30)
+      return {
+        color: "#FACC15",
+        tailwindColor: "text-yellow-400",
+        sliderAccent: "accent-yellow-400",
+        shadow: "shadow-yellow-500/50",
+      };
+    if (val < 35)
+      return {
+        color: "#FB923C",
+        tailwindColor: "text-orange-400",
+        sliderAccent: "accent-orange-400",
+        shadow: "shadow-orange-500/50",
+      };
+    if (val < 40)
+      return {
+        color: "#F87171",
+        tailwindColor: "text-red-400",
+        sliderAccent: "accent-red-400",
+        shadow: "shadow-red-500/50",
+      };
+    return {
+      color: "#EF4444",
+      tailwindColor: "text-red-500",
+      sliderAccent: "accent-red-500",
+      shadow: "shadow-red-900/50",
+    };
   };
 
-  const bmiStyle = getBmiData(metricWeight, unit === 'metric' ? height : parseFloat(height)); 
-  
+  const bmiStyle = getBmiData(
+    metricWeight,
+    unit === "metric" ? height : parseFloat(height)
+  );
+
   const getBmiFromMetric = () => {
-     if (!metricWeight || !metricHeight) return { color: '#94A3B8', tailwindColor: 'text-slate-400', sliderAccent: 'accent-slate-400' };
-     const bmi = metricWeight / ((metricHeight/100) ** 2);
-     if (bmi < 18.5) return { color: '#60A5FA', tailwindColor: 'text-blue-400', sliderAccent: 'accent-blue-400', bg: 'bg-blue-400' };
-     if (bmi < 25) return { color: '#4ADE80', tailwindColor: 'text-green-400', sliderAccent: 'accent-green-400', bg: 'bg-green-400' };
-     if (bmi < 30) return { color: '#FACC15', tailwindColor: 'text-yellow-400', sliderAccent: 'accent-yellow-400', bg: 'bg-yellow-400' };
-     if (bmi < 35) return { color: '#FB923C', tailwindColor: 'text-orange-400', sliderAccent: 'accent-orange-400', bg: 'bg-orange-400' };
-     if (bmi < 40) return { color: '#F87171', tailwindColor: 'text-red-400', sliderAccent: 'accent-red-400', bg: 'bg-red-400' };
-     return { color: '#EF4444', tailwindColor: 'text-red-600', sliderAccent: 'accent-red-600', bg: 'bg-red-600' };
+    if (!metricWeight || !metricHeight)
+      return {
+        color: "#94A3B8",
+        tailwindColor: "text-slate-400",
+        sliderAccent: "accent-slate-400",
+      };
+    const bmi = metricWeight / (metricHeight / 100) ** 2;
+    if (bmi < 18.5)
+      return {
+        color: "#60A5FA",
+        tailwindColor: "text-blue-400",
+        sliderAccent: "accent-blue-400",
+        bg: "bg-blue-400",
+      };
+    if (bmi < 25)
+      return {
+        color: "#4ADE80",
+        tailwindColor: "text-green-400",
+        sliderAccent: "accent-green-400",
+        bg: "bg-green-400",
+      };
+    if (bmi < 30)
+      return {
+        color: "#FACC15",
+        tailwindColor: "text-yellow-400",
+        sliderAccent: "accent-yellow-400",
+        bg: "bg-yellow-400",
+      };
+    if (bmi < 35)
+      return {
+        color: "#FB923C",
+        tailwindColor: "text-orange-400",
+        sliderAccent: "accent-orange-400",
+        bg: "bg-orange-400",
+      };
+    if (bmi < 40)
+      return {
+        color: "#F87171",
+        tailwindColor: "text-red-400",
+        sliderAccent: "accent-red-400",
+        bg: "bg-red-400",
+      };
+    return {
+      color: "#EF4444",
+      tailwindColor: "text-red-600",
+      sliderAccent: "accent-red-600",
+      bg: "bg-red-600",
+    };
   };
-  
+
   const visualStyle = getBmiFromMetric();
 
   // Custom Slider formatting
@@ -148,22 +262,29 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
 
   const handleManualInput = (setter, max) => (e) => {
     let value = e.target.value;
-    value = value.replace(',', '.');
+    value = value.replace(",", ".");
     if (/[^0-9.]/.test(value)) return;
     if ((value.match(/\./g) || []).length > 1) return;
-    if (value === '') { setter(''); return; }
-    if (value.length > 1 && value.startsWith('0') && value[1] !== '.') value = value.replace(/^0+/, '');
+    if (value === "") {
+      setter("");
+      return;
+    }
+    if (value.length > 1 && value.startsWith("0") && value[1] !== ".")
+      value = value.replace(/^0+/, "");
     setter(value);
   };
 
   const handleBlur = (setter, min, max, value) => () => {
-      const num = parseFloat(value);
-      if (isNaN(num) || num < min) { setter(min); }
-      else if (num > max) { setter(max); }
+    const num = parseFloat(value);
+    if (isNaN(num) || num < min) {
+      setter(min);
+    } else if (num > max) {
+      setter(max);
+    }
   };
 
   const formatFeetInches = (val) => {
-    if (!val) return '';
+    if (!val) return "";
     const feet = Math.floor(val / 12);
     const inches = Math.round(val % 12);
     return `${feet}'${inches}"`;
@@ -175,157 +296,184 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
     return parseFloat(str);
   };
 
+  // Dynamic Defaults for Visualization (Middle of Range)
+  const defaultHeight = useMemo(() => {
+    const mid = (ranges.hMin + ranges.hMax) / 2;
+    return Math.round(mid / ranges.hStep) * ranges.hStep;
+  }, [ranges]);
 
-   // Dynamic Defaults for Visualization (Middle of Range)
-   const defaultHeight = useMemo(() => {
-       const mid = (ranges.hMin + ranges.hMax) / 2;
-       return Math.round(mid / ranges.hStep) * ranges.hStep;
-   }, [ranges]);
-
-   const defaultWeight = useMemo(() => {
-       const mid = (ranges.wMin + ranges.wMax) / 2;
-       return Math.round(mid / ranges.wStep) * ranges.wStep;
-   }, [ranges]);
+  const defaultWeight = useMemo(() => {
+    const mid = (ranges.wMin + ranges.wMax) / 2;
+    return Math.round(mid / ranges.wStep) * ranges.wStep;
+  }, [ranges]);
 
   return (
     <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
       <h3 className="font-bold text-lg lg:text-xl mb-4 lg:mb-6 text-center text-white uppercase tracking-wider">
-        {t('controls.visual')}
+        {t("controls.visual")}
       </h3>
-      
+
       {/* Top Section: Height Slider + Visualization */}
       <div className="flex-none h-[320px] lg:h-[380px] flex flex-row gap-4 lg:gap-6 relative">
-        
         {/* Left: Height Slider (Vertical) */}
         <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-14 lg:w-20">
-           <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
-             {t('common.height')}
-           </label>
-           <div className="relative flex-1 flex items-center justify-center w-full min-h-[240px] lg:min-h-[280px]">
+          <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
+            {t("common.height")}
+          </label>
+          <div className="relative flex-1 flex items-center justify-center w-full min-h-[240px] lg:min-h-[280px]">
+            <input
+              type="range"
+              min={ranges.hMin}
+              max={ranges.hMax}
+              step={ranges.hStep}
+              value={height === "" ? defaultHeight : height}
+              onChange={(e) => setHeight(e.target.value)}
+              style={{
+                transform: "rotate(-90deg)",
+              }}
+              className={`absolute ${sliderClasses} w-[220px] lg:w-[280px] touch-none`}
+            />
+          </div>
+          <div className="flex flex-col items-center mt-2 w-full">
+            {unit === "metric" ? (
               <input
-                type="range"
-                min={ranges.hMin}
-                max={ranges.hMax}
-                step={ranges.hStep}
-                value={height === '' ? defaultHeight : height}
-                onChange={(e) => setHeight(e.target.value)}
-                style={{ 
-                  transform: 'rotate(-90deg)', 
-                }}
-                className={`absolute ${sliderClasses} w-[220px] lg:w-[280px] touch-none`}
+                type="text"
+                inputMode="decimal"
+                value={height}
+                onChange={handleManualInput(setHeight, ranges.hMax)}
+                onBlur={handleBlur(setHeight, ranges.hMin, ranges.hMax, height)}
+                onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
+                placeholder={defaultHeight.toString()}
+                className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-500"
               />
-           </div>
-           <div className="flex flex-col items-center mt-2 w-full">
-              {unit === 'metric' ? (
-                  <input 
-                    type="text"
-                    inputMode="decimal"
-                    value={height}
-                    onChange={handleManualInput(setHeight, ranges.hMax)}
-                    onBlur={handleBlur(setHeight, ranges.hMin, ranges.hMax, height)}
-                    onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                    placeholder={defaultHeight.toString()}
-                    className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-500"
-                  />
-              ) : (
-                  <div className='[&>input]:bg-transparent [&>input]:text-white [&>input]:border-slate-600 [&>input]:w-20 [&>input]:text-center [&>input]:text-xl [&>input]:font-black [&>input]:border-b-2 [&>input]:focus:outline-none'>
-                    <ImperialHeightInput 
-                       inches={height} 
-                       onChange={setHeight}
-                       min={ranges.hMin}
-                       max={ranges.hMax}
-                       placeholder={formatFeetInches(defaultHeight)}
-                    />
-                  </div>
-              )}
-              <span className="text-xs font-bold text-slate-500">{unit === 'metric' ? 'cm' : 'ft/in'}</span>
-           </div>
+            ) : (
+              <div className="[&>input]:bg-transparent [&>input]:text-white [&>input]:border-slate-600 [&>input]:w-20 [&>input]:text-center [&>input]:text-xl [&>input]:font-black [&>input]:border-b-2 [&>input]:focus:outline-none">
+                <ImperialHeightInput
+                  inches={height}
+                  onChange={setHeight}
+                  min={ranges.hMin}
+                  max={ranges.hMax}
+                  placeholder={formatFeetInches(defaultHeight)}
+                />
+              </div>
+            )}
+            <span className="text-xs font-bold text-slate-500">
+              {unit === "metric" ? "cm" : "ft/in"}
+            </span>
+          </div>
         </div>
 
         {/* Center: Human Visualization */}
         <div className="flex-1 flex items-end justify-center relative overflow-hidden pb-4 border-b border-dashed border-slate-700">
-           
-            {/* Background Ruler Lines */}
-            <div className="absolute inset-0 pointer-events-none opacity-10 flex flex-col justify-between py-12">
-               {[...Array(9)].map((_, i) => {
-                  // Dynamic ruler based on range
-                  const range = ranges.hMax - ranges.hMin;
-                  const val = ranges.hMax - (range * (i / 8));
-                  return (
-                    <div key={i} className="w-full border-t border-slate-400 flex justify-between px-2">
-                       <span className="text-[10px] -mt-2 text-slate-500">{Math.round(val)}{unit === 'metric' ? 'cm' : '"'}</span>
-                    </div>
-                  );
-               })}
-            </div>
+          {/* Background Ruler Lines */}
+          <div className="absolute inset-0 pointer-events-none opacity-10 flex flex-col justify-between py-12">
+            {[...Array(9)].map((_, i) => {
+              // Dynamic ruler based on range
+              const range = ranges.hMax - ranges.hMin;
+              const val = ranges.hMax - range * (i / 8);
+              return (
+                <div
+                  key={i}
+                  className="w-full border-t border-slate-400 flex justify-between px-2"
+                >
+                  <span className="text-[10px] -mt-2 text-slate-500">
+                    {Math.round(val)}
+                    {unit === "metric" ? "cm" : '"'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
 
-            {/* Dynamic SVG with Glow Effect */}
-             <svg 
-               viewBox="-150 -100 500 650" 
-               preserveAspectRatio="xMidYMax meet"
-               className="h-full w-full transition-all duration-300 ease-out drop-shadow-2xl z-10"
-               style={{ filter: `drop-shadow(0 0 15px ${visualStyle.color}40)` }} 
-             >
-              <g transform="translate(100, 460)">
-                  {/* Shadow */}
-                  <ellipse cx="0" cy="20" rx="80" ry="15" fill="#000" opacity="0.2" filter="blur(5px)" />
-                  
-                  <g 
-                     transform={`scale(${widthScale}, ${heightScale})`} 
-                     className="transition-transform duration-300"
-                  >
-                     {/* Head */}
-                     <circle cx="0" cy="-330" r="30" fill={visualStyle.color} />
-                     
-                     {/* Body */}
-                     <path 
-                       d="M -40,-290 Q -50,-180 -40,-130 L -30,0 L -10,0 L -10,-120 L 10,-120 L 10,0 L 30,0 L 40,-130 Q 50,-180 40,-290 Z" 
-                       fill={visualStyle.color} 
-                     />
-                     
-                     {/* Arms */}
-                     <path d="M -45,-280 Q -80,-230 -75,-160 L -55,-160 Q -60,-220 -40,-270 Z" fill={visualStyle.color} />
-                     <path d="M 45,-280 Q 80,-230 75,-160 L 55,-160 Q 60,-220 40,-270 Z" fill={visualStyle.color} />
-                  </g>
+          {/* Dynamic SVG with Glow Effect */}
+          <svg
+            viewBox="-150 -100 500 650"
+            preserveAspectRatio="xMidYMax meet"
+            className="h-full w-full transition-all duration-300 ease-out drop-shadow-2xl z-10"
+            style={{ filter: `drop-shadow(0 0 15px ${visualStyle.color}40)` }}
+          >
+            <g transform="translate(100, 460)">
+              {/* Shadow */}
+              <ellipse
+                cx="0"
+                cy="20"
+                rx="80"
+                ry="15"
+                fill="#000"
+                opacity="0.2"
+                filter="blur(5px)"
+              />
+
+              <g
+                transform={`scale(${widthScale}, ${heightScale})`}
+                className="transition-transform duration-300"
+              >
+                {/* Head */}
+                <circle cx="0" cy="-330" r="30" fill={visualStyle.color} />
+
+                {/* Body */}
+                <path
+                  d="M -40,-290 Q -50,-180 -40,-130 L -30,0 L -10,0 L -10,-120 L 10,-120 L 10,0 L 30,0 L 40,-130 Q 50,-180 40,-290 Z"
+                  fill={visualStyle.color}
+                />
+
+                {/* Arms */}
+                <path
+                  d="M -45,-280 Q -80,-230 -75,-160 L -55,-160 Q -60,-220 -40,-270 Z"
+                  fill={visualStyle.color}
+                />
+                <path
+                  d="M 45,-280 Q 80,-230 75,-160 L 55,-160 Q 60,-220 40,-270 Z"
+                  fill={visualStyle.color}
+                />
               </g>
-            </svg>
+            </g>
+          </svg>
         </div>
-
       </div>
 
       {/* Bottom Section: Weight Slider */}
       <div className="pt-4 lg:pt-6 px-2 lg:px-4">
-         <div className="flex justify-between items-center mb-2">
-           <label className="text-xs font-bold uppercase text-slate-200">{t('common.weight')} ({unit === 'metric' ? 'kg' : 'lb'})</label>
-           <div className="flex items-center gap-1">
-             <input 
-                type="text"
-                inputMode="decimal"
-                value={weight}
-                onChange={handleManualInput(setWeight, ranges.wMax)}
-                onBlur={handleBlur(setWeight, ranges.wMin, ranges.wMax, weight)}
-                onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
-                placeholder={defaultWeight.toString()}
-                className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
-             />
-             <span className="text-xl font-black text-slate-500">{unit === 'metric' ? 'kg' : 'lb'}</span>
-           </div>
-         </div>
-         <input
-            type="range"
-            min={ranges.wMin}
-            max={ranges.wMax}
-            step={ranges.wStep}
-            value={weight === '' ? defaultWeight : weight}
-            onChange={(e) => setWeight(e.target.value)}
-            className={`w-full ${sliderClasses} touch-pan-y`}
-          />
-          <div className="flex justify-between text-xs font-bold text-slate-600 mt-2">
-            <span>{ranges.wMin}{unit === 'metric' ? 'kg' : 'lb'}</span>
-            <span>{ranges.wMax}{unit === 'metric' ? 'kg' : 'lb'}</span>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-xs font-bold uppercase text-slate-200">
+            {t("common.weight")} ({unit === "metric" ? "kg" : "lb"})
+          </label>
+          <div className="flex items-center gap-1">
+            <input
+              type="text"
+              inputMode="decimal"
+              value={weight}
+              onChange={handleManualInput(setWeight, ranges.wMax)}
+              onBlur={handleBlur(setWeight, ranges.wMin, ranges.wMax, weight)}
+              onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
+              placeholder={defaultWeight.toString()}
+              className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
+            />
+            <span className="text-xl font-black text-slate-500">
+              {unit === "metric" ? "kg" : "lb"}
+            </span>
           </div>
+        </div>
+        <input
+          type="range"
+          min={ranges.wMin}
+          max={ranges.wMax}
+          step={ranges.wStep}
+          value={weight === "" ? defaultWeight : weight}
+          onChange={(e) => setWeight(e.target.value)}
+          className={`w-full ${sliderClasses} touch-pan-y`}
+        />
+        <div className="flex justify-between text-xs font-bold text-slate-600 mt-2">
+          <span>
+            {ranges.wMin}
+            {unit === "metric" ? "kg" : "lb"}
+          </span>
+          <span>
+            {ranges.wMax}
+            {unit === "metric" ? "kg" : "lb"}
+          </span>
+        </div>
       </div>
-
     </div>
   );
 }
