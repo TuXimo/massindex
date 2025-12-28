@@ -65,6 +65,12 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const lastProps = useRef({ w: userWeight, h: userHeight, u: unit });
   const highlightTimerRef = useRef(null);
   const lastTapRef = useRef(0); // Track tap timing for custom double-tap
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (typeof window !== 'undefined') {
+        return window.innerWidth >= 1024;
+    }
+    return true;
+  });
 
   const handleCellInteraction = (w, h) => {
     const now = Date.now();
@@ -343,29 +349,45 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   // Auto-scroll effect
   useEffect(() => {
     if (highlightWeight && highlightHeight) {
-      if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
-
+      // Force scroll on both mobile and desktop if needed
+      
       const activeCell = document.getElementById('active-bmi-cell');
       if (activeCell && containerRef.current) {
          const container = containerRef.current;
          const cellTop = activeCell.offsetTop;
          const cellLeft = activeCell.offsetLeft;
-         // Center logic...
-         const containerTop = container.scrollTop;
+         const cellHeight = activeCell.offsetHeight;
+         const cellWidth = activeCell.offsetWidth;
          
-         const isVerticallyVisible = cellTop >= containerTop && (cellTop + activeCell.offsetHeight) <= (containerTop + container.clientHeight);
-         const isHorizontallyVisible = activeCell.offsetLeft >= container.scrollLeft && (activeCell.offsetLeft + activeCell.offsetWidth) <= (container.scrollLeft + container.clientWidth);
+         // Sticky offset calculation (approx 2.25rem * zoom)
+         const rem = 16; // Assumption
+         const stickyOffset = 2.25 * zoomLevel * rem;
+
+         // Viewport boundaries (accounting for sticky headers)
+         const visibleTop = container.scrollTop + stickyOffset;
+         const visibleBottom = container.scrollTop + container.clientHeight;
+         const visibleLeft = container.scrollLeft + stickyOffset;
+         const visibleRight = container.scrollLeft + container.clientWidth;
+
+         const isVerticallyVisible = cellTop >= visibleTop && (cellTop + cellHeight) <= visibleBottom;
+         const isHorizontallyVisible = cellLeft >= visibleLeft && (cellLeft + cellWidth) <= visibleRight;
 
          if (!isVerticallyVisible || !isHorizontallyVisible) {
+            // Scroll to center, but ensure we don't put it *under* the sticky header if centering puts it high
+            // Actually centering usually handles it, but let's be robust.
+            // Center target:
+            let targetTop = cellTop - (container.clientHeight / 2) + (cellHeight / 2);
+            let targetLeft = cellLeft - (container.clientWidth / 2) + (cellWidth / 2);
+
             container.scrollTo({
-              top: cellTop - (container.clientHeight / 2) + (activeCell.clientHeight / 2),
-              left: cellLeft - (container.clientWidth / 2) + (activeCell.clientWidth / 2),
+              top: targetTop,
+              left: targetLeft,
               behavior: 'smooth'
             });
          }
       }
     }
-  }, [highlightWeight, highlightHeight, zoomLevel]);
+  }, [highlightWeight, highlightHeight, zoomLevel, isExpanded]);
 
   // Helper for Imperial Parsing
   const parseImperialHeight = (val) => {
@@ -431,27 +453,44 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
   return (
       <div className="w-full max-w-full overflow-hidden p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl relative group transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-slate-700 pb-2 mb-6 gap-4 lg:gap-0">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full lg:w-auto">
-            <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2 shrink-0">
-              {userConfig?.mode === 'child' ? t('table.pediatric') : t('table.reference')} 
-              {unit === 'imperial' && <span className="text-slate-500 text-sm">{t('table.imperial')}</span>}
-              {unit === 'metric' && <span className="text-slate-500 text-sm">{t('table.metric')}</span>}
-            </h3>
-            {userConfig?.mode === 'child' && (
-                <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90 mt-1 sm:mt-0">
-                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20 whitespace-nowrap">
-                        {userConfig.age} {t('table.years')}
-                    </span>
-                    <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20 whitespace-nowrap">
-                        {userConfig.gender === 'male' ? 'M' : 'F'}
-                    </span>
-                </div>
-            )}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-slate-700 pb-2 mb-6 gap-4 lg:gap-0">
+        <div className="flex justify-between items-center w-full lg:w-auto">
+             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 flex-1">
+                <h3 className="font-bold text-xl uppercase text-white tracking-wider flex items-baseline gap-2 shrink-0 flex-wrap">
+                  {userConfig?.mode === 'child' ? t('table.pediatric') : t('table.reference')} 
+                  {unit === 'imperial' && <span className="text-slate-500 text-sm whitespace-nowrap">{t('table.imperial')}</span>}
+                  {unit === 'metric' && <span className="text-slate-500 text-sm whitespace-nowrap">{t('table.metric')}</span>}
+                </h3>
+                {userConfig?.mode === 'child' && (
+                    <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase opacity-90 mt-1 sm:mt-0">
+                        <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20 whitespace-nowrap">
+                            {userConfig.age} {t('table.years')}
+                        </span>
+                        <span className="bg-blue-900/40 px-2 py-1 rounded border border-blue-500/20 whitespace-nowrap">
+                            {userConfig.gender === 'male' ? 'M' : 'F'}
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* Mobile Toggle (Chevron) - Discrete */}
+            <button 
+               onClick={() => setIsExpanded(!isExpanded)}
+               className="lg:hidden p-2 text-slate-500 hover:text-slate-200 transition-colors shrink-0 ml-2 rounded-full active:bg-slate-800/50 outline-none"
+               title={isExpanded ? "Collapse" : "Expand"}
+            >
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                 </svg>
+            </button>
         </div>
+        
+        
 
 
-        {/* Zoom Controls (Outside of range groups) */}
+
+        {/* Zoom Controls (Outside of range groups) - Hidden when collapsed on mobile */}
+        {isExpanded && (
         <div className="flex rounded-lg p-1 self-end lg:self-auto ml-2 gap-1 relative z-50">
              {/* Unified Settings Button - Hidden for Children */}
              {userConfig?.mode !== 'child' && (
@@ -606,13 +645,16 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                +
              </button>
         </div>
+        )}
 
 
 
       </div>
       
-      <div 
-        className={`w-full overflow-auto rounded-xl border border-slate-700/50 max-h-[500px] scrollbar-hide relative ${isDragging ? 'cursor-grabbing' : ''}`} 
+       {isExpanded && (
+       <>
+       <div 
+         className={`w-full overflow-auto rounded-xl border border-slate-700/50 aspect-square lg:aspect-auto max-h-[500px] scrollbar-hide relative ${isDragging ? 'cursor-grabbing' : ''}`} 
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
@@ -711,10 +753,12 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
               })}
             </tbody>
           </table>
-      </div>
-      <div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-center text-slate-500">
-        {t('table.footer')}
-      </div>
+       </div>
+       <div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-center text-slate-500">
+         {t('table.footer')}
+       </div>
+       </>
+       )}
     </div>
   );
 }
