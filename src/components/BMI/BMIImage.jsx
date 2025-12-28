@@ -75,6 +75,20 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   const metricWeight = unit === 'metric' ? parseFloat(weight) : parseFloat(weight) / 2.20462;
   const metricHeight = unit === 'metric' ? parseFloat(height) : parseFloat(height) * 2.54;
 
+  // Calculate dynamic ranges - NOW RECEIVED FROM PARENT
+  const ranges = effectiveRanges || useMemo(() => {
+     // Fallback if not passed (though it should be)
+     const defaults = getSliderRanges(unit, userConfig.mode, userConfig.age);
+     return {
+        wMin: customRanges?.wMin !== '' ? parseInt(customRanges.wMin) : defaults.wMin,
+        wMax: customRanges?.wMax !== '' ? parseInt(customRanges.wMax) : defaults.wMax,
+        hMin: customRanges?.hMin !== '' ? parseInt(customRanges.hMin) : defaults.hMin,
+        hMax: customRanges?.hMax !== '' ? parseInt(customRanges.hMax) : defaults.hMax,
+        wStep: defaults.wStep,
+        hStep: defaults.hStep
+     };
+  }, [unit, userConfig.mode, userConfig.age, customRanges]);
+
   // Visualization Logic ...
   const baseRatio = 0.4;
   const currentRatio = (metricWeight && metricHeight) ? (metricWeight / metricHeight) : baseRatio;
@@ -83,7 +97,13 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
   if (metricWeight && metricHeight) {
      widthScale = 0.5 + (0.65 * (currentRatio / baseRatio)); 
   }
-  const heightScale = metricHeight ? (metricHeight / 175) : 1;
+  // Calculate height progress (0 to 1) for scaling alignment
+  const hMin = ranges.hMin || 140;
+  const hMax = ranges.hMax || 220;
+  const hProgress = metricHeight ? Math.max(0, Math.min(1, (metricHeight - hMin) / (hMax - hMin))) : 0.5;
+
+  // Map progress to scale range (Approx 0.75 to 1.25 fits well within the viewBox relative to the ruler)
+  const heightScale = 0.75 + (0.5 * hProgress);
   // Calculate BMI for dynamic coloring
   const getBmiData = (w, h) => {
     if (!w || !h) return { color: '#94A3B8', tailwindColor: 'bg-slate-400' }; // Default Slate
@@ -155,35 +175,23 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
     return parseFloat(str);
   };
 
-  // Calculate dynamic ranges - NOW RECEIVED FROM PARENT
-  const ranges = effectiveRanges || useMemo(() => {
-     // Fallback if not passed (though it should be)
-     const defaults = getSliderRanges(unit, userConfig.mode, userConfig.age);
-     return {
-        wMin: customRanges?.wMin !== '' ? parseInt(customRanges.wMin) : defaults.wMin,
-        wMax: customRanges?.wMax !== '' ? parseInt(customRanges.wMax) : defaults.wMax,
-        hMin: customRanges?.hMin !== '' ? parseInt(customRanges.hMin) : defaults.hMin,
-        hMax: customRanges?.hMax !== '' ? parseInt(customRanges.hMax) : defaults.hMax,
-        wStep: defaults.wStep,
-        hStep: defaults.hStep
-     };
-  }, [unit, userConfig.mode, userConfig.age, customRanges]);
+
 
   return (
     <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
-      <h3 className="font-bold text-xl mb-6 text-center text-white uppercase tracking-wider">
+      <h3 className="font-bold text-lg lg:text-xl mb-4 lg:mb-6 text-center text-white uppercase tracking-wider">
         {t('controls.visual')}
       </h3>
       
       {/* Top Section: Height Slider + Visualization */}
-      <div className="flex-1 flex flex-row gap-4 lg:gap-6 relative min-h-0">
+      <div className="flex-none h-[320px] lg:h-[380px] flex flex-row gap-4 lg:gap-6 relative">
         
         {/* Left: Height Slider (Vertical) */}
         <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-14 lg:w-20">
            <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
              {t('common.height')}
            </label>
-           <div className="relative flex-1 flex items-center justify-center w-full min-h-[280px]">
+           <div className="relative flex-1 flex items-center justify-center w-full min-h-[240px] lg:min-h-[280px]">
               <input
                 type="range"
                 min={ranges.hMin}
@@ -194,7 +202,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
                 style={{ 
                   transform: 'rotate(-90deg)', 
                 }}
-                className={`absolute ${sliderClasses} w-[260px] lg:w-[280px]`}
+                className={`absolute ${sliderClasses} w-[220px] lg:w-[280px] touch-none`}
               />
            </div>
            <div className="flex flex-col items-center mt-2 w-full">
@@ -228,12 +236,17 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
         <div className="flex-1 flex items-end justify-center relative overflow-hidden pb-4 border-b border-dashed border-slate-700">
            
             {/* Background Ruler Lines */}
-            <div className="absolute inset-0 pointer-events-none opacity-10 flex flex-col justify-between py-8">
-               {[...Array(10)].map((_, i) => (
-                  <div key={i} className="w-full border-t border-slate-400 flex justify-between px-2">
-                     <span className="text-[10px] -mt-2 text-slate-500">{220 - (i * 8)}cm</span>
-                  </div>
-               ))}
+            <div className="absolute inset-0 pointer-events-none opacity-10 flex flex-col justify-between py-12">
+               {[...Array(9)].map((_, i) => {
+                  // Dynamic ruler based on range
+                  const range = ranges.hMax - ranges.hMin;
+                  const val = ranges.hMax - (range * (i / 8));
+                  return (
+                    <div key={i} className="w-full border-t border-slate-400 flex justify-between px-2">
+                       <span className="text-[10px] -mt-2 text-slate-500">{Math.round(val)}{unit === 'metric' ? 'cm' : '"'}</span>
+                    </div>
+                  );
+               })}
             </div>
 
             {/* Dynamic SVG with Glow Effect */}
@@ -295,7 +308,7 @@ export default function BMIImage({ weight, height, setWeight, setHeight, unit = 
             step={ranges.wStep}
             value={weight === '' ? (unit === 'metric' ? 70 : 154) : weight}
             onChange={(e) => setWeight(e.target.value)}
-            className={`w-full ${sliderClasses}`}
+            className={`w-full ${sliderClasses} touch-pan-y`}
           />
           <div className="flex justify-between text-xs font-bold text-slate-600 mt-2">
             <span>{ranges.wMin}{unit === 'metric' ? 'kg' : 'lb'}</span>

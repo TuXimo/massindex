@@ -25,9 +25,10 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="w-full py-6 lg:py-8 bg-transparent relative z-20 flex flex-col lg:block items-center gap-4 lg:gap-0">
-      {/* Buttons: Static on mobile (order-2), Absolute on desktop */}
-      <div className="order-2 lg:order-none relative lg:absolute lg:right-6 lg:top-1/2 lg:-translate-y-1/2 flex items-center gap-3 z-30">
+    <header className="w-full p-4 lg:p-6 flex flex-col items-center justify-center relative z-50 shadow-sm mb-4">
+      
+      {/* Buttons: Bottom on mobile (order-2), Absolute Right on desktop */}
+      <div className="order-2 lg:order-none relative lg:absolute lg:right-6 lg:top-1/2 lg:-translate-y-1/2 flex items-center gap-3 z-30 mt-2 lg:mt-0">
              
              {/* Language Dropdown */}
              <div className="relative" ref={langMenuRef}>

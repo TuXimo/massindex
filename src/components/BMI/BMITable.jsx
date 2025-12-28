@@ -46,7 +46,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
     if (typeof window !== 'undefined') {
         const saved = localStorage.getItem('table_zoom');
         if (saved) return parseFloat(saved);
-        return window.innerWidth < 1024 ? 1.2 : 1;
+        return window.innerWidth < 1024 ? 1.4 : 1;
     }
     return 1;
   });
@@ -64,6 +64,19 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   const [showHighlight, setShowHighlight] = useState(false);
   const lastProps = useRef({ w: userWeight, h: userHeight, u: unit });
   const highlightTimerRef = useRef(null);
+  const lastTapRef = useRef(0); // Track tap timing for custom double-tap
+
+  const handleCellInteraction = (w, h) => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+       triggerHighlight();
+       if (onSelect) onSelect(w, h);
+       lastTapRef.current = 0;
+    } else {
+       lastTapRef.current = now;
+    }
+  };
 
   // Recalculate ranges for table consistently with sliders
   const ranges = useMemo(() => {
@@ -71,6 +84,9 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   }, [unit, userConfig?.mode, userConfig?.age]);
 
   const triggerHighlight = () => {
+    // Disable highlight animation on mobile/tablet to reduce visual noise
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
+    
     setShowHighlight(true);
     if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
     highlightTimerRef.current = setTimeout(() => setShowHighlight(false), 1500);
@@ -442,11 +458,11 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                   <div className="relative group-range" ref={rangeMenuRef}>
                      <button
                          onClick={() => setIsRangeMenuOpen(!isRangeMenuOpen)}
-                         className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-all bg-transparent border-none outline-none"
+                         className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-700 hover:text-white transition-all bg-transparent"
                          title={t('table.settings')}
                      >
-                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="w-5 h-5">
-                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0h-3.75M3 16.5h3.75m9.75 0h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0h-3.75m-9.75 0H15m4.125 0a1.5 1.5 0 01-3 0" />
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 min-w-[1.25rem] flex-shrink-0">
+                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0-3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0-3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
                          </svg>
                      </button>
                      {isRangeMenuOpen && (
@@ -682,10 +698,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                         <td 
                           key={`${h}-${w}`} 
                           id={active ? "active-bmi-cell" : undefined}
-                          onDoubleClick={() => {
-                            triggerHighlight();
-                            if (onSelect) onSelect(w, h);
-                          }}
+                          onClick={() => handleCellInteraction(w, h)}
                           style={{ width: `${2.25 * zoomLevel}rem`, height: `${2.25 * zoomLevel}rem`, touchAction: 'manipulation' }}
                           className={`p-1 cursor-pointer select-none border-none outline-none ${cellStateClasses}`}
                         >

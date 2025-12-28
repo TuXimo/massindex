@@ -253,7 +253,7 @@ export default function BMISection() {
     <section id="bmi-main-view" ref={sectionRef} className="w-full max-w-[95rem] min-h-auto lg:min-h-[800px] flex flex-col">
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-stretch flex-1 min-h-0">
         {/* Left Column (Inputs & Visual) */}
-        <div className="flex flex-col w-full lg:w-[450px] flex-none gap-4 lg:gap-6">
+        <div className="flex flex-col w-full lg:w-[450px] lg:max-w-[450px] flex-none gap-4 lg:gap-6">
            
            {/* BOX 1: Controls (Yellow Box equivalent) */}
            <div className="flex-none">

@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap");
 
 :root {
-  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-family: "Rajdhani", system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 500;
 
   color-scheme: light; /* Switched back to light base, but components handle dark mode */
-  color: #0F172A;
-  background-color: #F1F5F9;
+  color: #0f172a;
+  background-color: #f1f5f9;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,8 +34,8 @@ a:hover {
 
 /* Hide scrollbar for IE, Edge and Firefox globally */
 * {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 body {
@@ -44,13 +44,19 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: #0F172A;
+  background-color: #0f172a;
   color: white;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2rem;
   line-height: 1.1;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 3.2em;
+  }
 }
 
 button {
@@ -76,24 +82,24 @@ button:focus-visible {
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* Hide spin buttons for number inputs */
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
   appearance: none;
-  margin: 0; 
+  margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }

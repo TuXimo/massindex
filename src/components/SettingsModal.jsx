@@ -82,7 +82,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                                 if (val > 20) val = 20;
                                 updateConfig('age', val.toString());
                             }}
-                            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white font-bold focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-slate-700"
+                            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white font-bold text-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-slate-700"
                             placeholder="10"
                         />
                     </div>
