@@ -99,20 +99,30 @@ export default function BMISection() {
      };
   }, [unit, userConfig?.mode, userConfig?.age, customRanges]);
 
-  // Persist BMI Data
+  // Persist BMI Data (Only for Adult mode)
   useEffect(() => {
-    localStorage.setItem('bmi_weight', weight);
-    localStorage.setItem('bmi_height', height);
-    localStorage.setItem('bmi_unit', unit);
-  }, [weight, height, unit]);
+    if (userConfig?.mode !== 'child') {
+      localStorage.setItem('bmi_weight', weight);
+      localStorage.setItem('bmi_height', height);
+      localStorage.setItem('bmi_unit', unit);
+    }
+  }, [weight, height, unit, userConfig?.mode]);
 
   // Store original metric values to prevent precision loss on round-trip (Metric -> Imperial -> Metric)
   const preservedMetricValues = useRef(null);
 
-  // Reset inputs to empty when config changes (Mode or Age) - Dynamic defaults will handle visual slider position
+  // Handle Mode Change: Reset for Child, Restore for Adult
   useEffect(() => {
-    setWeight('');
-    setHeight('');
+    if (userConfig?.mode === 'child') {
+      setWeight('');
+      setHeight('');
+    } else {
+      // Switching back to Adult: Restore from localStorage if available
+      const savedW = localStorage.getItem('bmi_weight');
+      const savedH = localStorage.getItem('bmi_height');
+      if (savedW) setWeight(savedW);
+      if (savedH) setHeight(savedH);
+    }
   }, [userConfig?.mode, userConfig?.age]);
 
   // Handle unit change (convert values)
