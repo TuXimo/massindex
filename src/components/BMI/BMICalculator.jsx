@@ -71,7 +71,7 @@ const ImperialHeightInput = ({ inches, onChange, min, max, onError }) => {
       onChange={(e) => setLocalVal(e.target.value.replace(/[.,]/g, "'"))}
       onBlur={handleBlur}
       onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
-      className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-white font-bold text-lg placeholder-slate-600 transition-all"
+      className="w-full p-3 bg-bmi-input border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-bmi-accent/50 focus:border-bmi-accent text-white font-bold text-lg placeholder-slate-600 transition-all font-mono"
       placeholder="5'9&quot;"
     />
   );
