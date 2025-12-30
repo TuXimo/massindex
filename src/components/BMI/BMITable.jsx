@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getSliderRanges } from '../../utils/bmiUtils';
+import BMIReferenceTable from './BMIReferenceTable';
+
 
 // Helper Component for Delayed Input (Commit on Blur/Enter)
 const DelayedInput = ({ value, onCommit, max, placeholder, type = "number", className }) => {
@@ -54,6 +56,19 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
   useEffect(() => {
     localStorage.setItem('table_zoom', zoomLevel);
   }, [zoomLevel]);
+
+  useEffect(() => {
+    localStorage.setItem('table_zoom', zoomLevel);
+  }, [zoomLevel]);
+
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+        return window.innerWidth < 1024 ? 'list' : 'grid';
+    }
+    return 'grid';
+  });
+
+
 
 
   const [isDragging, setIsDragging] = useState(false);
@@ -490,21 +505,26 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
 
 
-        {/* Zoom Controls (Outside of range groups) - Hidden when collapsed on mobile */}
         {isExpanded && (
-        <div className="flex rounded-lg p-1 self-end lg:self-auto ml-2 gap-1 relative z-[80]">
-             {/* Unified Settings Button - Hidden for Children */}
-             {userConfig?.mode !== 'child' && (
-                  <div className="relative group-range" ref={rangeMenuRef}>
+        <div className="flex items-center rounded-lg p-1 self-end lg:ml-auto gap-1 relative z-[80]">
+             {/* Group 1: Settings (Hidden for Children AND List Mode) */}
+             {userConfig?.mode !== 'child' && viewMode === 'grid' && (
+                  <div className="relative group-range flex items-center" ref={rangeMenuRef}>
                      <button
                          onClick={() => setIsRangeMenuOpen(!isRangeMenuOpen)}
-                         className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-700 text-bmi-muted hover:bg-slate-800 hover:text-white transition-all bg-transparent"
+                         className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 bg-[#1a1a1a] hover:bg-slate-800 transition-all"
                          title={t('table.settings')}
                      >
-                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 min-w-[1.25rem] flex-shrink-0">
-                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0-3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0-3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />
+                         <svg xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '20px', minHeight: '20px', width: '20px', height: '20px', stroke: '#ffffff' }} className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                             <line x1="4" x2="20" y1="12" y2="12"/>
+                             <line x1="4" x2="20" y1="6" y2="6"/>
+                             <line x1="4" x2="20" y1="18" y2="18"/>
+                             <circle cx="15" cy="12" r="2" fill="currentColor"/>
+                             <circle cx="9" cy="6" r="2" fill="currentColor"/>
+                             <circle cx="17" cy="18" r="2" fill="currentColor"/>
                          </svg>
                      </button>
+                     
                      {isRangeMenuOpen && (
                          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 lg:absolute lg:inset-auto lg:right-0 lg:top-full lg:mt-2 lg:bg-transparent lg:backdrop-blur-none lg:p-0 lg:block">
                              <div className="w-full max-w-sm bg-[#070F13] border border-slate-700 rounded-xl shadow-2xl overflow-hidden lg:w-64 lg:rounded-lg lg:scale-100 animate-in fade-in zoom-in-95 duration-200">
@@ -642,23 +662,69 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
                              </div>
                          </div>
                      )}
-                 </div>
+                     
+                     <div className="h-6 w-px bg-slate-800/50 mx-2 hidden lg:block"></div>
+                  </div>
              )}
 
-             <button 
-               onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}
-               className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-700 text-bmi-muted hover:bg-slate-800 hover:text-white transition-all bg-transparent"
-               title={t('table.zoomOut')}
-             >
-               -
-             </button>
-             <button 
-               onClick={() => setZoomLevel(prev => Math.min(1.5, prev + 0.1))}
-               className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-700 text-bmi-muted hover:bg-slate-800 hover:text-white transition-all bg-transparent"
-               title={t('table.zoomIn')}
-             >
-               +
-             </button>
+             {/* Group 2: Zoom Controls */}
+             {viewMode === 'grid' && (
+             <div className="flex items-center">
+                  <button 
+                    onClick={() => setZoomLevel(prev => Math.max(0.7, prev - 0.1))}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 bg-[#1a1a1a] hover:bg-slate-800 transition-all mr-1"
+                    title={t('table.zoomOut')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '20px', minHeight: '20px', width: '20px', height: '20px', stroke: '#ffffff' }} className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" x2="16.65" y1="21" y2="16.65"/>
+                        <line x1="8" x2="14" y1="11" y2="11"/>
+                    </svg>
+                  </button>
+                  <button 
+                    onClick={() => setZoomLevel(prev => Math.min(1.5, prev + 0.1))}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-600 bg-[#1a1a1a] hover:bg-slate-800 transition-all"
+                    title={t('table.zoomIn')}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '20px', minHeight: '20px', width: '20px', height: '20px', stroke: '#ffffff' }} className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" x2="16.65" y1="21" y2="16.65"/>
+                        <line x1="11" x2="11" y1="8" y2="14"/>
+                        <line x1="8" x2="14" y1="11" y2="11"/>
+                    </svg>
+                  </button>
+                  <div className="h-6 w-px bg-slate-800/50 mx-2 hidden lg:block"></div>
+             </div>
+             )}
+
+             {/* Group 3: View Mode Toggle (Now on Far Right) */}
+             <div className="flex items-center">
+                 <button
+                   onClick={() => setViewMode(prev => prev === 'grid' ? 'list' : 'grid')}
+                   className={`w-8 h-8 flex items-center justify-center rounded-lg border transition-all ${
+                       viewMode === 'list' ? 'bg-slate-800 border-slate-600 shadow-inner' : 'border-slate-600 bg-[#1a1a1a] hover:bg-slate-800'
+                   }`}
+                   title={viewMode === 'grid' ? "Ver lista de referencia" : "Ver tabla detallada"}
+                 >
+                    {viewMode === 'grid' ? (
+                       <svg xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '20px', minHeight: '20px', width: '20px', height: '20px', stroke: '#ffffff' }} className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                           <line x1="8" x2="21" y1="6" y2="6"/>
+                           <line x1="8" x2="21" y1="12" y2="12"/>
+                           <line x1="8" x2="21" y1="18" y2="18"/>
+                           <line x1="3" x2="3.01" y1="6" y2="6"/>
+                           <line x1="3" x2="3.01" y1="12" y2="12"/>
+                           <line x1="3" x2="3.01" y1="18" y2="18"/>
+                       </svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" style={{ minWidth: '20px', minHeight: '20px', width: '20px', height: '20px', stroke: '#ffffff' }} className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                    )}
+                 </button>
+             </div>
         </div>
         )}
 
@@ -666,7 +732,11 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
 
       </div>
       
-       {isExpanded && (
+       {isExpanded && viewMode === 'list' && (
+           <BMIReferenceTable bmi={calculateCellBMI(userWeight, userHeight)} />
+       )}
+
+       {isExpanded && viewMode === 'grid' && (
        <>
        <div 
          className={`w-full overflow-auto rounded-xl border border-slate-700/50 aspect-square lg:aspect-auto max-h-[500px] scrollbar-hide relative ${isDragging ? 'cursor-grabbing' : ''}`} 

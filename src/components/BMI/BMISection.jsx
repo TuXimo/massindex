@@ -252,7 +252,8 @@ export default function BMISection() {
   const handleWeightChange = (newVal) => {
     setWeight(newVal);
     // If we have a new weight value and height is currently empty, autofill height
-    if (newVal && !height) {
+    // ONLY if NOT in calculator mode (visual mode expects defaults)
+    if (activeTab !== 'calculator' && newVal && !height) {
         setHeight(unit === 'metric' ? '175' : '69'); 
     }
   };
@@ -260,7 +261,8 @@ export default function BMISection() {
   const handleHeightChange = (newVal) => {
     setHeight(newVal);
     // If we have a new height value and weight is currently empty, autofill weight
-    if (newVal && !weight) {
+    // ONLY if NOT in calculator mode
+    if (activeTab !== 'calculator' && newVal && !weight) {
         setWeight(unit === 'metric' ? '70' : '154');
     }
   };

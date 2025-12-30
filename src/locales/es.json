@@ -77,7 +77,22 @@
     "intervals": "Intervalos",
     "min": "Min",
     "max": "Máx",
-    "limits": "Min {{min}} - Máx {{max}}"
+    "limits": "Min {{min}} - Máx {{max}}",
+    "referenceList": {
+      "headers": {
+        "range": "Rango IMC",
+        "classification": "Clasificación",
+        "description": "Descripción"
+      },
+      "descriptions": {
+        "underweight": "Riesgo de salud aumentado",
+        "normal": "Riesgo de salud mínimo",
+        "overweight": "Riesgo de salud aumentado",
+        "obesity1": "Alto riesgo de salud",
+        "obesity2": "Muy alto riesgo de salud",
+        "obesity3": "Riesgo de salud extremadamente alto"
+      }
+    }
   },
   "footer": {
     "designedFor": "Diseñado para tu salud."

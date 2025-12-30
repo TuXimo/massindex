@@ -82,10 +82,10 @@ function ToggleGroup({
         
         // Dynamic styles for active state
         const activeStyle = isActive ? {
-          backgroundColor: `${activeColor}20`, // 20% opacity using hex alpha
+          backgroundColor: `${activeColor}40`, // Increased opacity to 25% (hex 40 is ~25%)
           color: activeColor,
-          borderColor: `${activeColor}40`,
-          boxShadow: `0 0 15px ${activeColor}15`
+          borderColor: `${activeColor}60`,
+          boxShadow: `0 0 15px ${activeColor}25`
         } : {};
 
         return (

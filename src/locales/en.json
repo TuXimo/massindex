@@ -76,7 +76,22 @@
     "intervals": "Intervals",
     "min": "Min",
     "max": "Max",
-    "limits": "Min {{min}} - Max {{max}}"
+    "limits": "Min {{min}} - Max {{max}}",
+    "referenceList": {
+      "headers": {
+        "range": "BMI Range",
+        "classification": "Classification",
+        "description": "Description"
+      },
+      "descriptions": {
+        "underweight": "Increased health risk",
+        "normal": "Least health risk",
+        "overweight": "Increased health risk",
+        "obesity1": "High health risk",
+        "obesity2": "Very high health risk",
+        "obesity3": "Extremely high health risk"
+      }
+    }
   },
   "footer": {
     "designedFor": "Designed for your health."
