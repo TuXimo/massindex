@@ -41,7 +41,7 @@ export default function SettingsModal({ isOpen, onClose }) {
       ></div>
 
       {/* Modal Content */}
-      <div className="relative bg-slate-900 border border-slate-700/50 rounded-2xl w-full max-w-md p-6 shadow-2xl shadow-blue-500/10 overflow-hidden transform transition-all">
+      <div className="relative bg-[#070F13] border border-slate-700/50 rounded-2xl w-full max-w-md p-6 shadow-2xl shadow-blue-500/10 overflow-hidden transform transition-all">
         {/* Decorative Glow */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full pointer-events-none"></div>
 

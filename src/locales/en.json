@@ -65,8 +65,8 @@
       "autoUpdate": "Automatically updates when changing table limits"
     },
     "headers": {
-      "metric": "HGT \\ WGT",
-      "imperial": "HGT \\ WGT"
+      "metric": "W / H",
+      "imperial": "W / H"
     },
     "footer": "* Find the intersection of your height and weight.",
     "zoomIn": "Zoom In",

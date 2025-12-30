@@ -66,8 +66,8 @@
       "autoUpdate": "Se actualiza automáticamente al cambiar los límites"
     },
     "headers": {
-      "metric": "ALT \\ PESO",
-      "imperial": "HGT \\ WGT"
+      "metric": "P / A",
+      "imperial": "P / A"
     },
     "footer": "* Encuentra la intersección de tu altura y peso.",
     "zoomIn": "Aumentar",

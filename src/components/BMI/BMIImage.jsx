@@ -308,7 +308,7 @@ export default function BMIImage({
   }, [ranges]);
 
   return (
-    <div className="flex-col flex p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl">
+    <div className="flex-col flex p-4 lg:p-6 bg-bmi-card backdrop-blur-sm border border-slate-800 rounded-2xl shadow-xl">
       <h3 className="font-bold text-lg lg:text-xl mb-4 lg:mb-6 text-center text-white uppercase tracking-wider">
         {t("controls.visual")}
       </h3>
@@ -317,7 +317,7 @@ export default function BMIImage({
       <div className="flex-none h-[320px] lg:h-[380px] flex flex-row gap-4 lg:gap-6 relative">
         {/* Left: Height Slider (Vertical) */}
         <div className="flex flex-col items-center justify-between h-full py-4 z-10 w-14 lg:w-20">
-          <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-slate-200">
+          <label className="text-xs font-bold uppercase mb-4 writing-mode-vertical whitespace-nowrap text-bmi-muted">
             {t("common.height")}
           </label>
           <div className="relative flex-1 flex items-center justify-center w-full min-h-[240px] lg:min-h-[280px]">
@@ -344,10 +344,10 @@ export default function BMIImage({
                 onBlur={handleBlur(setHeight, ranges.hMin, ranges.hMax, height)}
                 onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
                 placeholder={defaultHeight.toString()}
-                className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-500"
+                className="w-16 text-center text-xl font-black border-b-2 border-slate-700 bg-transparent text-white focus:outline-none focus:border-bmi-accent placeholder-slate-600"
               />
             ) : (
-              <div className="[&>input]:bg-transparent [&>input]:text-white [&>input]:border-slate-600 [&>input]:w-20 [&>input]:text-center [&>input]:text-xl [&>input]:font-black [&>input]:border-b-2 [&>input]:focus:outline-none">
+              <div className="[&>input]:bg-transparent [&>input]:text-white [&>input]:border-slate-700 [&>input]:w-20 [&>input]:text-center [&>input]:text-xl [&>input]:font-black [&>input]:border-b-2 [&>input]:focus:outline-none">
                 <ImperialHeightInput
                   inches={height}
                   onChange={setHeight}
@@ -357,14 +357,14 @@ export default function BMIImage({
                 />
               </div>
             )}
-            <span className="text-xs font-bold text-slate-500">
+            <span className="text-xs font-bold text-bmi-muted">
               {unit === "metric" ? "cm" : "ft/in"}
             </span>
           </div>
         </div>
 
         {/* Center: Human Visualization */}
-        <div className="flex-1 flex items-end justify-center relative overflow-hidden pb-4 border-b border-dashed border-slate-700">
+        <div className="flex-1 flex items-end justify-center relative overflow-hidden pb-4 border-b border-dashed border-slate-800">
           {/* Background Ruler Lines */}
           <div className="absolute inset-0 pointer-events-none opacity-10 flex flex-col justify-between py-12">
             {[...Array(9)].map((_, i) => {
@@ -374,7 +374,7 @@ export default function BMIImage({
               return (
                 <div
                   key={i}
-                  className="w-full border-t border-slate-400 flex justify-between px-2"
+                  className="w-full border-t border-slate-500 flex justify-between px-2"
                 >
                   <span className="text-[10px] -mt-2 text-slate-500">
                     {Math.round(val)}
@@ -435,7 +435,7 @@ export default function BMIImage({
       {/* Bottom Section: Weight Slider */}
       <div className="pt-4 lg:pt-6 px-2 lg:px-4">
         <div className="flex justify-between items-center mb-2">
-          <label className="text-xs font-bold uppercase text-slate-200">
+          <label className="text-xs font-bold uppercase text-bmi-muted">
             {t("common.weight")} ({unit === "metric" ? "kg" : "lb"})
           </label>
           <div className="flex items-center gap-1">
@@ -447,7 +447,7 @@ export default function BMIImage({
               onBlur={handleBlur(setWeight, ranges.wMin, ranges.wMax, weight)}
               onKeyDown={(e) => e.key === "Enter" && e.target.blur()}
               placeholder={defaultWeight.toString()}
-              className="w-16 text-center text-xl font-black border-b-2 border-slate-600 bg-transparent text-white focus:outline-none focus:border-blue-500 placeholder-slate-600"
+              className="w-16 text-center text-xl font-black border-b-2 border-slate-700 bg-transparent text-white focus:outline-none focus:border-bmi-accent placeholder-slate-600"
             />
             <span className="text-xl font-black text-slate-500">
               {unit === "metric" ? "kg" : "lb"}

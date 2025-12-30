@@ -33,16 +33,16 @@ export default function BMIControls({
 
   // Container Class
   // Added p-[3px] to create a "track" effect which helps the "shape" feel more deliberate
-  const containerClass = "bg-slate-900/40 rounded-full grid grid-cols-2 relative border border-slate-700/50 backdrop-blur-md overflow-hidden h-[50px] p-[3px]";
+  const containerClass = "bg-black/40 rounded-full grid grid-cols-2 relative border border-slate-700/50 backdrop-blur-md overflow-hidden h-[50px] p-[3px]";
 
   // Slider Class
   // inset-y-[3px] to match the padding
   const sliderClass = `absolute inset-y-[3px] w-[calc(50%-3px)] rounded-full transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] z-10`;
 
   return (
-    <div className="p-6 bg-slate-900/20 backdrop-blur-md border border-slate-800/50 rounded-2xl flex flex-col justify-center gap-6 h-full relative overflow-hidden">
+    <div className="p-6 bg-bmi-card backdrop-blur-md border border-slate-800 rounded-2xl flex flex-col justify-center gap-6 h-full relative overflow-hidden">
          {/* Subtle background glow matching BMI */}
-         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-transparent to-transparent opacity-50 z-0"></div>
+         <div className="absolute inset-0 bg-gradient-to-br from-bmi-bg via-transparent to-transparent opacity-50 z-0"></div>
          <div className="absolute top-0 right-0 w-32 h-32 blur-[60px] rounded-full opacity-10 transition-colors duration-500" style={{ backgroundColor: bmiInfo.color }}></div>
 
          {/* Mode Toggle */}

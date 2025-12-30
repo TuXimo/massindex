@@ -53,13 +53,13 @@ export default function BMIResult({ bmi }) {
   }
 
   return (
-    <div className={`p-6 bg-slate-800/50 backdrop-blur-sm border-l-8 ${accentColor} rounded-r-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all min-h-[174px] flex-col justify-center ${!bmi ? 'hidden lg:flex' : 'flex'}`}>
+    <div className={`p-6 bg-bmi-card backdrop-blur-sm border-l-8 ${accentColor} rounded-r-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all min-h-[174px] flex-col justify-center ${!bmi ? 'hidden lg:flex' : 'flex'}`}>
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-bmi-muted mb-1">
             {t('result.analysisResult')}
           </p>
-          <h2 className={`text-4xl font-bold uppercase tracking-tighter ${!bmi ? 'text-slate-600' : 'text-white'}`}>
+          <h2 className={`text-4xl font-bold uppercase tracking-tighter ${!bmi ? 'text-bmi-muted' : 'text-white'}`}>
             {category}
           </h2>
         </div>
@@ -68,7 +68,7 @@ export default function BMIResult({ bmi }) {
              <div className={`inline-block px-4 py-2 ${badgeColor} text-white font-black text-xl mb-2 rounded-lg shadow-lg transition-colors`}>
                 {t('result.bmi')} {bmi || '-'}
              </div>
-             <p className="font-medium text-sm leading-relaxed text-slate-300 md:text-right max-w-md">
+             <p className="font-medium text-sm leading-relaxed text-bmi-text md:text-right max-w-md">
                 {message}
              </p>
         </div>

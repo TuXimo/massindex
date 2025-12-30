@@ -7,9 +7,10 @@
   line-height: 1.5;
   font-weight: 500;
 
-  color-scheme: light; /* Switched back to light base, but components handle dark mode */
-  color: #0f172a;
-  background-color: #f1f5f9;
+  /* Dark Green Theme Default */
+  color-scheme: dark;
+  color: #e2e8f0; /* bmi-text */
+  background-color: #050a09; /* bmi-bg */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -44,7 +45,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: #0f172a;
+  background-color: #050a09;
   color: white;
 }
 

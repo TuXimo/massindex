@@ -167,7 +167,7 @@ export default function BMICalculator({
     commitInput(localHeight, setHeight, heightMin, heightMax, "height");
 
   return (
-    <div className="p-4 lg:p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-xl flex-1 h-full transition-all duration-300 hover:shadow-2xl hover:border-slate-600 hover:bg-slate-800/60 relative">
+    <div className="p-4 lg:p-6 bg-bmi-card backdrop-blur-sm border border-slate-800 rounded-2xl shadow-xl flex-1 h-full transition-all duration-300 hover:shadow-2xl hover:border-slate-700 relative">
       {/* Error Toast styled within component */}
       {errorMsg && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-500/90 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-50 animate-bounce text-center min-w-[200px]">
@@ -180,7 +180,7 @@ export default function BMICalculator({
       </h3>
       <div className="space-y-4 lg:space-y-6">
         <div>
-          <label className="block text-xs font-bold uppercase mb-2 text-slate-200">
+          <label className="block text-xs font-bold uppercase mb-2 text-bmi-muted">
             {t("calculator.weight")} ({unit === "metric" ? "kg" : "lb"})
           </label>
           <input
@@ -195,13 +195,13 @@ export default function BMICalculator({
                 e.target.blur();
               }
             }}
-            className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-white font-bold text-lg placeholder-slate-600 transition-all"
+            className="w-full p-3 bg-bmi-input border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-bmi-accent/50 focus:border-bmi-accent text-white font-bold text-lg placeholder-slate-600 transition-all font-mono"
             placeholder={unit === "metric" ? "70" : "150"}
             required
           />
         </div>
         <div>
-          <label className="block text-xs font-bold uppercase mb-2 text-slate-200">
+          <label className="block text-xs font-bold uppercase mb-2 text-bmi-muted">
             {t("calculator.height")} ({unit === "metric" ? "cm" : "in"})
           </label>
           {unit === "metric" ? (
@@ -217,12 +217,12 @@ export default function BMICalculator({
                   e.target.blur();
                 }
               }}
-              className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-white font-bold text-lg placeholder-slate-600 transition-all"
+              className="w-full p-3 bg-bmi-input border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-bmi-accent/50 focus:border-bmi-accent text-white font-bold text-lg placeholder-slate-600 transition-all font-mono"
               placeholder="175"
               required
             />
           ) : (
-            <div className="[&>input]:w-full [&>input]:p-3 [&>input]:bg-slate-900 [&>input]:border [&>input]:border-slate-700 [&>input]:rounded-lg [&>input]:focus:outline-none [&>input]:focus:ring-2 [&>input]:focus:ring-blue-500/50 [&>input]:focus:border-blue-500 [&>input]:text-white [&>input]:font-bold [&>input]:placeholder-slate-600 [&>input]:transition-all">
+            <div className="w-full">
               <ImperialHeightInput
                 inches={height}
                 onChange={setHeight}
@@ -235,23 +235,23 @@ export default function BMICalculator({
         </div>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-dashed border-slate-700">
-        <p className="text-xs font-bold text-slate-500 uppercase text-center mb-3">
+      <div className="mt-8 pt-6 border-t border-dashed border-slate-800">
+        <p className="text-xs font-bold text-bmi-muted uppercase text-center mb-3">
           {t("calculator.formula")}
         </p>
-        <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50 text-center">
-          <span className="font-bold text-lg block text-slate-200">
+        <div className="bg-bmi-bg/50 p-4 rounded-lg border border-slate-800 text-center">
+          <span className="font-bold text-lg block text-bmi-text">
             {unit === "metric"
               ? t("calculator.formulaMetric")
               : t("calculator.formulaImperial")}
           </span>
-          <span className="text-xs font-bold text-slate-500 block mt-1">
+          <span className="text-xs font-bold text-bmi-muted block mt-1">
             {unit === "metric" ? "(kg / m²)" : "(lb / in²)"}
           </span>
         </div>
       </div>
 
-      <div className="mt-6 text-xs text-center font-bold text-slate-600 uppercase">
+      <div className="mt-6 text-xs text-center font-bold text-bmi-muted uppercase">
         {t("calculator.autoUpdate")}
       </div>
     </div>
