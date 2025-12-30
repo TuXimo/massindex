@@ -7,7 +7,7 @@
 
   [plugins.inputs]
     buildDir = "dist"
-    url = "https://www.massindex.fit"
+    baseUrl = "https://www.massindex.fit"
 
 [[redirects]]
   from = "/*"
