@@ -21,6 +21,7 @@ const SEO = ({ title, description, keywords, name, type }) => {
       <title>{fullTitle}</title>
       <meta name='description' content={metaDescription} />
       <meta name="keywords" content={metaKeywords} />
+      <meta name="author" content="Máximo Brunetti" />
       
       {/* Open Graph tags (optional but good for SEO) */}
       <meta property="og:type" content={type || 'website'} />
