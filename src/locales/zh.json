@@ -54,8 +54,8 @@
     "imperial": "(英制)",
     "years": "岁",
     "headers": {
-      "metric": "身高 \\ 体重",
-      "imperial": "身高 \\ 体重"
+      "metric": "重 / 高",
+      "imperial": "重 / 高"
     },
     "footer": "* 找到您的身高和体重的交叉点。",
     "zoomIn": "放大",
@@ -65,7 +65,22 @@
     "intervals": "间隔",
     "min": "最小",
     "max": "最大",
-    "limits": "最小 {{min}} - 最大 {{max}}"
+    "limits": "最小 {{min}} - 最大 {{max}}",
+    "referenceList": {
+      "headers": {
+        "range": "BMI范围",
+        "classification": "分类",
+        "description": "描述"
+      },
+      "descriptions": {
+        "underweight": "健康风险增加",
+        "normal": "健康风险最低",
+        "overweight": "健康风险增加",
+        "obesity1": "高健康风险",
+        "obesity2": "非常高的健康风险",
+        "obesity3": "极高的健康风险"
+      }
+    }
   },
   "footer": {
     "designedFor": "专为您的健康设计。"

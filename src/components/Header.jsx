@@ -11,7 +11,7 @@ export default function Header() {
   const langMenuRef = useRef(null);
 
   const { t } = useTranslation();
-  const languages = ['es', 'en', 'fr', 'it', 'de', 'ja', 'hi', 'zh', 'ar'];
+  const languages = ['es', 'en', 'fr', 'it', 'de', 'ja', 'hi', 'zh', 'ar', 'fil'];
 
   // Close lang menu on click outside
   useEffect(() => {

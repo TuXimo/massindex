@@ -93,7 +93,7 @@ function ToggleGroup({
             key={opt.value}
             onClick={() => onChange(opt.value)}
             className={`
-              relative flex-1 flex items-center justify-center gap-2 rounded-lg text-[12px] font-bold uppercase transition-all duration-300 border border-transparent py-3
+              relative flex-1 flex items-center justify-center gap-1 sm:gap-2 rounded-lg text-[10px] sm:text-[12px] font-bold uppercase transition-all duration-300 border border-transparent py-2 sm:py-3 min-w-0
               ${language === 'ja' ? '' : 'tracking-widest'}
               ${isActive ? '' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'}
             `}
@@ -101,8 +101,10 @@ function ToggleGroup({
             role="tab"
             aria-selected={isActive}
           >
-            {opt.icon}
-            <span>{opt.label}</span>
+            <div className="flex-shrink-0">
+              {opt.icon}
+            </div>
+            <span className="truncate">{opt.label}</span>
           </button>
         );
       })}

@@ -1,0 +1,108 @@
+{
+  "header": {
+    "title": "Body Mass Index",
+    "settings": "Mga Setting"
+  },
+  "seo": {
+    "title": "Mass Index",
+    "description": "Kalkulahin ang iyong Body Mass Index (BMI) nang wasto gamit ang aming madaling gamiting tool. Sumusuporta sa mga yunit ng metriko at imperyal, at nagbibigay ng angkop na pagsusuri para sa mga matatanda at bata."
+  },
+  "common": {
+    "height": "Taas",
+    "weight": "Bigat"
+  },
+  "settings": {
+    "title": "Mga Setting",
+    "calcMode": "Mode ng Pagkalkula",
+    "adultStandard": "Karaniwang Matanda",
+    "childTeen": "Bata / Kabataan",
+    "adultDesc": "Karaniwang pagkalkula ng BMI para sa mga matatanda na higit sa 20 taon.",
+    "childDesc": "Pagkalkulang inayos ayon sa porsyento (WHO/CDC) para sa 2 hanggang 19 na taon.",
+    "age": "Edad (2-20 Taon)",
+    "biologicalSex": "Biyolohikal na Kasarian",
+    "note": "Paalala:",
+    "noteDesc": "Ang pagkalkula para sa mga menor de edad ay gumagamit ng mga growth chart (percentiles) na nangangailangan ng tumpak na edad at kasarian upang maging wasto.",
+    "validAge": "Kinakailangan ang wastong edad (2-20)",
+    "done": "Tapos na"
+  },
+  "controls": {
+    "calculator": "CALCULATOR",
+    "visual": "BISWAL",
+    "metric": "METRIKO",
+    "imperial": "IMPERYAL"
+  },
+  "result": {
+    "analysisResult": "Resulta ng Pagsusuri",
+    "bmi": "BMI:",
+    "categories": {
+      "underweight": "Kulang sa Timbang",
+      "normal": "Normal na Timbang",
+      "overweight": "Sobra sa Timbang",
+      "obesity1": "Labis na Katabaan I",
+      "obesity2": "Labis na Katabaan II",
+      "obesity3": "Labis na Katabaan III"
+    },
+    "messages": {
+      "underweight": "Ang iyong BMI ay mas mababa sa malusog na saklaw. Maipapayong kumunsulta sa isang espesyalista.",
+      "normal": "Mahusay! Mayroon kang malusog na timbang. Panatilihin ang iyong magagandang gawi.",
+      "overweight": "Ang iyong BMI ay nagpapahiwatig ng sobrang timbang. Makakatulong ang maliliit na pagbabago sa diyeta at aktibidad.",
+      "obesity1": "Ang iyong BMI ay nagpapahiwatig ng Obesity Class I. Mahalagang pangalagaan ang iyong kalusugan sa puso.",
+      "obesity2": "Ang iyong BMI ay nagpapahiwatig ng Obesity Class II. Kumunsulta sa doktor para sa isang personalisadong plano.",
+      "obesity3": "Ang iyong BMI ay nagpapahiwatig ng Morbid Obesity. Ang paghingi ng medikal na payo ay napakahalaga."
+    }
+  },
+  "table": {
+    "pediatric": "Talaan ng Pediatric",
+    "reference": "Talaan ng Sanggunian",
+    "metric": "(Metriko)",
+    "imperial": "(Imperyal)",
+    "years": "taon",
+    "validation": {
+      "maxValue": "Ang maximum na halaga ay {{max}}",
+      "minValue": "Ang minimum na halaga ay {{min}}",
+      "maxRange": "Ang limitasyon ng maximum na saklaw ay {{max}}",
+      "minRange": "Ang limitasyon ng minimum na saklaw ay {{min}}",
+      "autoUpdate": "Awtomatikong nag-a-update kapag binago ang mga limitasyon ng talahanayan"
+    },
+    "headers": {
+      "metric": "B / T",
+      "imperial": "B / T"
+    },
+    "footer": "* Hanapin ang interseksyon ng iyong taas at bigat.",
+    "zoomIn": "Palakihin",
+    "zoomOut": "Paliitin",
+    "settings": "Mga Setting",
+    "ranges": "Mga Saklaw",
+    "intervals": "Mga Interval",
+    "min": "Min",
+    "max": "Max",
+    "limits": "Min {{min}} - Max {{max}}",
+    "referenceList": {
+      "headers": {
+        "range": "Saklaw ng BMI",
+        "classification": "Klasipikasyon",
+        "description": "Paglalarawan"
+      },
+      "descriptions": {
+        "underweight": "Tumataas na panganib sa kalusugan",
+        "normal": "Pinakamababang panganib sa kalusugan",
+        "overweight": "Tumataas na panganib sa kalusugan",
+        "obesity1": "Mataas na panganib sa kalusugan",
+        "obesity2": "Napakataas na panganib sa kalusugan",
+        "obesity3": "Labis na mataas na panganib sa kalusugan"
+      }
+    }
+  },
+  "footer": {
+    "designedFor": "Dinisenyo para sa iyong kalusugan."
+  },
+  "calculator": {
+    "title": "Calculator",
+    "weight": "Bigat",
+    "height": "Taas",
+    "formula": "Formula",
+    "formulaMetric": "BMI = Bigat / Taas²",
+    "formulaImperial": "BMI = 703 × Bigat / Taas²",
+    "autoUpdate": "* Awtomatikong nag-a-update ang mga resulta"
+  }
+}

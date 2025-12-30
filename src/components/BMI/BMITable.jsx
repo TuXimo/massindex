@@ -491,7 +491,7 @@ export default function BMITable({ userWeight, userHeight, unit = 'metric', onSe
             {/* Mobile Toggle (Chevron) - Discrete */}
             <button 
                onClick={() => setIsExpanded(!isExpanded)}
-               className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors shrink-0 ml-2 rounded-full active:bg-slate-800/50 outline-none"
+               className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors shrink-0 ml-2 outline-none !bg-transparent !border-none !shadow-none focus:ring-0"
                title={isExpanded ? "Collapse" : "Expand"}
             >
                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>

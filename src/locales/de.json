@@ -54,13 +54,28 @@
     "imperial": "(Imperial)",
     "years": "Jahre",
     "headers": {
-      "metric": "GRÖ \\ GEW",
-      "imperial": "HGT \\ WGT"
+      "metric": "G / Gr",
+      "imperial": "G / Gr"
     },
     "footer": "* Finden Sie den Schnittpunkt Ihrer Größe und Ihres Gewichts.",
     "zoomIn": "Vergrößern",
     "zoomOut": "Verkleinern",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "referenceList": {
+      "headers": {
+        "range": "BMI Bereich",
+        "classification": "Klassifizierung",
+        "description": "Beschreibung"
+      },
+      "descriptions": {
+        "underweight": "Erhöhtes Gesundheitsrisiko",
+        "normal": "Geringstes Gesundheitsrisiko",
+        "overweight": "Erhöhtes Gesundheitsrisiko",
+        "obesity1": "Hohes Gesundheitsrisiko",
+        "obesity2": "Sehr hohes Gesundheitsrisiko",
+        "obesity3": "Extrem hohes Gesundheitsrisiko"
+      }
+    }
   },
   "footer": {
     "designedFor": "Entwickelt für Ihre Gesundheit."

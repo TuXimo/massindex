@@ -54,8 +54,8 @@
     "imperial": "(ヤード・ポンド法)",
     "years": "歳",
     "headers": {
-      "metric": "身長 \\ 体重",
-      "imperial": "HGT \\ WGT"
+      "metric": "重 / 身",
+      "imperial": "重 / 身"
     },
     "footer": "* 身長と体重の交差点を見つけてください。",
     "zoomIn": "拡大",
@@ -65,7 +65,22 @@
     "intervals": "間隔",
     "min": "最小",
     "max": "最大",
-    "limits": "最小 {{min}} - 最大 {{max}}"
+    "limits": "最小 {{min}} - 最大 {{max}}",
+    "referenceList": {
+      "headers": {
+        "range": "BMI範囲",
+        "classification": "分類",
+        "description": "説明"
+      },
+      "descriptions": {
+        "underweight": "健康リスクの増加",
+        "normal": "健康リスク最小",
+        "overweight": "健康リスクの増加",
+        "obesity1": "高い健康リスク",
+        "obesity2": "非常に高い健康リスク",
+        "obesity3": "極めて高い健康リスク"
+      }
+    }
   },
   "footer": {
     "designedFor": "あなたの健康のために設計されました。"

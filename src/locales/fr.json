@@ -54,13 +54,28 @@
     "imperial": "(Impérial)",
     "years": "ans",
     "headers": {
-      "metric": "TLC \\ PDS",
-      "imperial": "HGT \\ WGT"
+      "metric": "P / T",
+      "imperial": "P / T"
     },
     "footer": "* Trouvez l'intersection de votre taille et poids.",
     "zoomIn": "Agrandir",
     "zoomOut": "Réduire",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "referenceList": {
+      "headers": {
+        "range": "Plage IMC",
+        "classification": "Classification",
+        "description": "Description"
+      },
+      "descriptions": {
+        "underweight": "Risque accru pour la santé",
+        "normal": "Risque minimal pour la santé",
+        "overweight": "Risque accru pour la santé",
+        "obesity1": "Risque élevé pour la santé",
+        "obesity2": "Risque très élevé pour la santé",
+        "obesity3": "Risque extrêmement élevé"
+      }
+    }
   },
   "footer": {
     "designedFor": "Conçu pour votre santé."

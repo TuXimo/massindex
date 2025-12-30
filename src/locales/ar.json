@@ -54,8 +54,8 @@
     "imperial": "(إمبراطوري)",
     "years": "سنة",
     "headers": {
-      "metric": "طول \\ وزن",
-      "imperial": "طول \\ وزن"
+      "metric": "و / ط",
+      "imperial": "و / ط"
     },
     "footer": "* ابحث عن تقاطع طولك ووزنك.",
     "zoomIn": "تكبير",
@@ -65,7 +65,22 @@
     "intervals": "فترات",
     "min": "الحد الأدنى",
     "max": "الحد الأقصى",
-    "limits": "الحد الأدنى {{min}} - الحد الأقصى {{max}}"
+    "limits": "الحد الأدنى {{min}} - الحد الأقصى {{max}}",
+    "referenceList": {
+      "headers": {
+        "range": "نطاق BMI",
+        "classification": "التصنيف",
+        "description": "الوصف"
+      },
+      "descriptions": {
+        "underweight": "زيادة المخاطر الصحية",
+        "normal": "أقل مخاطر صحية",
+        "overweight": "زيادة المخاطر الصحية",
+        "obesity1": "مخاطر صحية عالية",
+        "obesity2": "مخاطر صحية عالية جداً",
+        "obesity3": "مخاطر صحية شديدة للغاية"
+      }
+    }
   },
   "footer": {
     "designedFor": "صمم لصحتك."

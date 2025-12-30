@@ -54,13 +54,28 @@
     "imperial": "(Imperiale)",
     "years": "anni",
     "headers": {
-      "metric": "ALT \\ PESO",
-      "imperial": "HGT \\ WGT"
+      "metric": "P / A",
+      "imperial": "P / A"
     },
     "footer": "* Trova l'intersezione tra la tua altezza e il peso.",
     "zoomIn": "Ingrandisci",
     "zoomOut": "Riduci",
-    "settings": "Impostazioni"
+    "settings": "Impostazioni",
+    "referenceList": {
+      "headers": {
+        "range": "Intervallo BMI",
+        "classification": "Classificazione",
+        "description": "Descrizione"
+      },
+      "descriptions": {
+        "underweight": "Aumento del rischio per la salute",
+        "normal": "Rischio minimo per la salute",
+        "overweight": "Aumento del rischio per la salute",
+        "obesity1": "Alto rischio per la salute",
+        "obesity2": "Rischio molto alto per la salute",
+        "obesity3": "Rischio estremamente alto"
+      }
+    }
   },
   "footer": {
     "designedFor": "Progettato per la tua salute."
